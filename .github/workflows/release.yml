@@ -83,6 +83,12 @@ jobs:
             tar czf "${ARCHIVE_NAME}.tar.gz" -C "target/${{ matrix.target }}/release" linear-cli
           fi
 
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linear-cli-${{ matrix.short_target }}
+          path: linear-cli-*.${{ matrix.ext }}
+
   release:
     name: Create Release
     needs: [build]
