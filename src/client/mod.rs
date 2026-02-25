@@ -12,12 +12,20 @@ pub mod states;
 pub mod teams;
 pub mod users;
 
+use std::time::Duration;
+
 use crate::error::CliError;
 use cynic::GraphQlError;
 use reqwest::blocking::Client;
 
 /// Linear API GraphQL endpoint
 const LINEAR_API_URL: &str = "https://api.linear.app/graphql";
+
+/// Connection timeout for the HTTP client
+const CONNECT_TIMEOUT: Duration = Duration::from_secs(10);
+
+/// Overall request timeout for the HTTP client
+const REQUEST_TIMEOUT: Duration = Duration::from_secs(30);
 
 /// Check for GraphQL errors and convert to CliError
 ///
@@ -64,9 +72,12 @@ impl Default for LinearClient {
 impl LinearClient {
     #[must_use]
     pub fn new() -> Self {
-        Self {
-            http_client: Client::new(),
-        }
+        let http_client = Client::builder()
+            .connect_timeout(CONNECT_TIMEOUT)
+            .timeout(REQUEST_TIMEOUT)
+            .build()
+            .expect("failed to build HTTP client");
+        Self { http_client }
     }
 
     /// Get the HTTP client for use in trait implementations
