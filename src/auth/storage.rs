@@ -29,6 +29,13 @@ pub trait TokenStorage: Send + Sync {
     fn delete(&self) -> Result<(), CliError>;
 }
 
+fn map_delete_credential_result(result: Result<(), keyring::Error>) -> Result<(), CliError> {
+    match result {
+        Ok(()) | Err(keyring::Error::NoEntry) => Ok(()),
+        Err(e) => Err(CliError::keyring_error(e)),
+    }
+}
+
 /// Production implementation using system keyring
 pub struct KeyringStorage {
     entry: keyring::Entry,
@@ -78,9 +85,7 @@ impl TokenStorage for KeyringStorage {
     }
 
     fn delete(&self) -> Result<(), CliError> {
-        self.entry
-            .delete_credential()
-            .map_err(CliError::keyring_error)
+        map_delete_credential_result(self.entry.delete_credential())
     }
 }
 
@@ -130,5 +135,24 @@ impl TokenStorage for MockTokenStorage {
 
     fn delete(&self) -> Result<(), CliError> {
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::map_delete_credential_result;
+
+    #[test]
+    fn delete_mapping_treats_no_entry_as_success() {
+        let result = map_delete_credential_result(Err(keyring::Error::NoEntry));
+
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn delete_mapping_preserves_success() {
+        let result = map_delete_credential_result(Ok(()));
+
+        assert!(result.is_ok());
     }
 }

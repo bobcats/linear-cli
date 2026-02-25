@@ -1,7 +1,7 @@
 use linear_cli::auth::commands::status::handle_status;
 use linear_cli::auth::config::TestConfigProvider;
 use linear_cli::auth::storage::TokenStorage;
-use linear_cli::client::auth::{MockAuthClient, UserInfo};
+use linear_cli::client::auth::{AuthClient, MockAuthClient, UserInfo};
 use linear_cli::error::CliError;
 use linear_cli::output::OutputFormat;
 use std::collections::HashMap;
@@ -53,6 +53,31 @@ impl TokenStorage for MockStorage {
         data.token = None;
         data.user_info = None;
         Ok(())
+    }
+}
+
+struct CountingAuthClient {
+    result: Result<UserInfo, CliError>,
+    validate_calls: Arc<Mutex<usize>>,
+}
+
+impl CountingAuthClient {
+    fn new(result: Result<UserInfo, CliError>) -> Self {
+        Self {
+            result,
+            validate_calls: Arc::new(Mutex::new(0)),
+        }
+    }
+
+    fn validate_call_count(&self) -> usize {
+        *self.validate_calls.lock().unwrap()
+    }
+}
+
+impl AuthClient for CountingAuthClient {
+    fn validate_token(&self, _token: &str) -> Result<UserInfo, CliError> {
+        *self.validate_calls.lock().unwrap() += 1;
+        self.result.clone()
     }
 }
 
@@ -224,6 +249,42 @@ fn test_status_with_no_token_shows_error() {
 
     assert!(result.is_err());
     assert!(matches!(result.unwrap_err(), CliError::AuthError(_)));
+}
+
+#[test]
+fn test_status_with_env_token_validates_and_ignores_stale_cached_user() {
+    let mut config_values = HashMap::new();
+    config_values.insert("LINEAR_TOKEN".to_string(), "lin_api_env_token".to_string());
+    let config = TestConfigProvider {
+        values: config_values,
+    };
+
+    let storage = MockStorage::new(Some("lin_api_stale_keyring_token".to_string()));
+    {
+        let mut data = storage.data.lock().unwrap();
+        data.user_info = Some(UserInfo {
+            id: "cached-1".to_string(),
+            name: "Stale User".to_string(),
+            email: "stale@example.com".to_string(),
+        });
+    }
+
+    let api_client = CountingAuthClient::new(Ok(UserInfo {
+        id: "fresh-1".to_string(),
+        name: "Fresh User".to_string(),
+        email: "fresh@example.com".to_string(),
+    }));
+    let io = CapturingIo::new();
+
+    let result = handle_status(&config, &storage, &api_client, &io, None);
+
+    assert!(result.is_ok());
+    assert_eq!(api_client.validate_call_count(), 1);
+
+    let output = io.stdout_lines();
+    assert!(output.iter().any(|line| line.contains("Fresh User")));
+    assert!(output.iter().any(|line| line.contains("fresh@example.com")));
+    assert!(!output.iter().any(|line| line.contains("Stale User")));
 }
 
 #[test]

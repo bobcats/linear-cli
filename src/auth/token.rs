@@ -15,10 +15,16 @@ pub fn get_token_with_provider(
     storage: &dyn TokenStorage,
 ) -> Result<SecretString, CliError> {
     // Precedence: LINEAR_TOKEN > LINEAR_API_TOKEN > Keyring
-    config
-        .get_var("LINEAR_TOKEN")
-        .or_else(|| config.get_var("LINEAR_API_TOKEN"))
-        .or_else(|| storage.get_token().ok().flatten())
+    if let Some(token) = config.get_var("LINEAR_TOKEN") {
+        return Ok(SecretString::from(token));
+    }
+
+    if let Some(token) = config.get_var("LINEAR_API_TOKEN") {
+        return Ok(SecretString::from(token));
+    }
+
+    storage
+        .get_token()?
         .map(SecretString::from)
         .ok_or_else(CliError::no_token)
 }

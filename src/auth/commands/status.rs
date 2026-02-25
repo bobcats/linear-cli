@@ -19,17 +19,6 @@ pub fn handle_status(
     // Get token
     let token = get_token_with_provider(config, storage)?;
 
-    // Try to get cached user info first (avoids API call)
-    let user_info = match storage.get_user_info()? {
-        Some(info) => info,
-        None => {
-            // No cached info, validate with API and cache it
-            let info = api_client.validate_token(token.expose_secret())?;
-            storage.store_auth(token.expose_secret(), &info)?;
-            info
-        }
-    };
-
     // Determine token source
     let source = if config.get_var("LINEAR_TOKEN").is_some() {
         TokenSource::LinearToken
@@ -37,6 +26,22 @@ pub fn handle_status(
         TokenSource::LinearApiToken
     } else {
         TokenSource::Keyring
+    };
+
+    let user_info = match source {
+        // Always validate env-provided tokens before reporting identity.
+        TokenSource::LinearToken | TokenSource::LinearApiToken => {
+            api_client.validate_token(token.expose_secret())?
+        }
+        // Keyring token path can safely reuse cached user info.
+        TokenSource::Keyring => match storage.get_user_info()? {
+            Some(info) => info,
+            None => {
+                let info = api_client.validate_token(token.expose_secret())?;
+                storage.store_auth(token.expose_secret(), &info)?;
+                info
+            }
+        },
     };
 
     // Always redact token - use `linear auth token` if you need the raw value

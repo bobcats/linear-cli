@@ -1,9 +1,32 @@
 use linear_cli::auth::config::TestConfigProvider;
-use linear_cli::auth::storage::MockTokenStorage;
+use linear_cli::auth::storage::{MockTokenStorage, TokenStorage};
 use linear_cli::auth::token::get_token_with_provider;
+use linear_cli::client::auth::UserInfo;
 use linear_cli::error::CliError;
 use secrecy::ExposeSecret;
 use std::collections::HashMap;
+
+struct ErrorStorage {
+    error: CliError,
+}
+
+impl TokenStorage for ErrorStorage {
+    fn get_token(&self) -> Result<Option<String>, CliError> {
+        Err(self.error.clone())
+    }
+
+    fn get_user_info(&self) -> Result<Option<UserInfo>, CliError> {
+        Ok(None)
+    }
+
+    fn store_auth(&self, _token: &str, _user_info: &UserInfo) -> Result<(), CliError> {
+        Ok(())
+    }
+
+    fn delete(&self) -> Result<(), CliError> {
+        Ok(())
+    }
+}
 
 #[test]
 fn test_linear_token_env_var_takes_precedence() {
@@ -84,4 +107,38 @@ fn test_token_wrapped_in_secret_string_not_visible_in_debug() {
         assert!(!debug_output.contains("secret_token_12345"));
         assert!(debug_output.contains("Secret"));
     }
+}
+
+#[test]
+fn test_keyring_read_error_is_propagated_when_no_env_token() {
+    let config = TestConfigProvider {
+        values: HashMap::new(),
+    };
+    let storage = ErrorStorage {
+        error: CliError::AuthError("Keyring unavailable".to_string()),
+    };
+
+    let result = get_token_with_provider(&config, &storage);
+
+    assert!(result.is_err());
+    assert!(matches!(
+        result,
+        Err(CliError::AuthError(ref message)) if message == "Keyring unavailable"
+    ));
+}
+
+#[test]
+fn test_env_token_bypasses_keyring_read_error() {
+    let mut values = HashMap::new();
+    values.insert("LINEAR_TOKEN".to_string(), "token_from_env".to_string());
+
+    let config = TestConfigProvider { values };
+    let storage = ErrorStorage {
+        error: CliError::AuthError("Keyring unavailable".to_string()),
+    };
+
+    let result = get_token_with_provider(&config, &storage);
+
+    assert!(result.is_ok());
+    assert_eq!(result.unwrap().expose_secret(), "token_from_env");
 }
