@@ -1,0 +1,14 @@
+[package]
+name = "linear-schema"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+cynic = { version = "3.12", features = ["rkyv"] }
+serde = { version = "1.0", features = ["derive"] }
+
+[dev-dependencies]
+serde_json = "1.0"
+
+[build-dependencies]
+cynic-codegen = { version = "3.12", features = ["rkyv"] }

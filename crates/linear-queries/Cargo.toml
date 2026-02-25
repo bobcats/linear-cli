@@ -1,0 +1,12 @@
+[package]
+name = "linear-queries"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+linear-schema = { path = "../linear-schema" }
+cynic = { version = "3.12", features = ["rkyv"] }
+serde = { version = "1.0", features = ["derive"] }
+
+[build-dependencies]
+cynic-codegen = { version = "3.12", features = ["rkyv"] }

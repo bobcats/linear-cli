@@ -1,0 +1,24 @@
+{
+  "generated_from": "docs/perf/baseline-hotspots.md",
+  "generated_at": "2026-02-24T21:10:00Z",
+  "targets": [
+    {
+      "benchmark_id": "project_handlers_json/list",
+      "baseline_ns": 1335.0,
+      "target_ns": 1250.0,
+      "tolerance_percent": 5.0
+    },
+    {
+      "benchmark_id": "project_handlers_json/view",
+      "baseline_ns": 1322.0,
+      "target_ns": 1240.0,
+      "tolerance_percent": 5.0
+    },
+    {
+      "benchmark_id": "issue_handlers_json/create",
+      "baseline_ns": 1123.0,
+      "target_ns": 1090.0,
+      "tolerance_percent": 5.0
+    }
+  ]
+}
