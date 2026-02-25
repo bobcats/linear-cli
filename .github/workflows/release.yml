@@ -60,6 +60,15 @@ jobs:
         if: matrix.use_cross
         run: cargo install cross --locked
 
+      - name: Build release binary
+        run: |
+          if [ "${{ matrix.use_cross }}" = "true" ]; then
+            cross build --release --target ${{ matrix.target }}
+          else
+            cargo build --release --target ${{ matrix.target }}
+          fi
+        shell: bash
+
   release:
     name: Create Release
     needs: [build]
