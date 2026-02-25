@@ -69,6 +69,20 @@ jobs:
           fi
         shell: bash
 
+      - name: Package binary
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          ARCHIVE_NAME="linear-cli-${VERSION}-${{ matrix.short_target }}"
+          BIN_PATH="target/${{ matrix.target }}/release/linear-cli"
+
+          if [ "${{ matrix.ext }}" = "zip" ]; then
+            BIN_PATH="${BIN_PATH}.exe"
+            7z a "${ARCHIVE_NAME}.zip" "${BIN_PATH}"
+          else
+            tar czf "${ARCHIVE_NAME}.tar.gz" -C "target/${{ matrix.target }}/release" linear-cli
+          fi
+
   release:
     name: Create Release
     needs: [build]
