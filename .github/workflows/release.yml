@@ -95,4 +95,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Placeholder
-        run: echo "TODO"
+        run: echo "release job placeholder"
