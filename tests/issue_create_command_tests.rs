@@ -143,6 +143,7 @@ fn test_create_outputs_full_issue_object_on_success() {
         Some("@me".to_string()),
         None,
         None,
+        None,
         Some(2),
         &client,
         &config,
@@ -171,6 +172,7 @@ fn test_create_returns_auth_error_when_no_token() {
     let result = handle_create(
         "ENG",
         "Implement issue create",
+        None,
         None,
         None,
         None,
@@ -212,6 +214,7 @@ fn test_create_propagates_not_found_for_unresolved_reference() {
         Some("unknown-project".to_string()),
         None,
         None,
+        None,
         &client,
         &config,
         &storage,
@@ -246,6 +249,7 @@ fn test_create_uses_config_provider_json_style_override() {
         Some("@me".to_string()),
         None,
         None,
+        None,
         Some(2),
         &client,
         &config,
@@ -261,4 +265,37 @@ fn test_create_uses_config_provider_json_style_override() {
         "issue create JSON should be pretty when LINEAR_CLI_JSON_STYLE=pretty is provided by config"
     );
     assert!(output.contains("\"identifier\": \"ENG-123\""));
+}
+
+#[test]
+fn test_create_with_parent_passes_through_to_client() {
+    let mut values = HashMap::new();
+    values.insert("LINEAR_TOKEN".to_string(), "test_token".to_string());
+
+    let config = TestConfigProvider { values };
+    let storage = MockStorage { token: None };
+    let io = CapturingIo::new();
+    let client = MockCreateIssueClient {
+        create_result: Ok(sample_issue()),
+    };
+
+    let result = handle_create(
+        "ENG",
+        "Sub-issue title",
+        None,
+        None,
+        None,
+        None,
+        Some("ENG-100".to_string()),
+        None,
+        &client,
+        &config,
+        &storage,
+        &io,
+        None,
+    );
+
+    assert!(result.is_ok());
+    let output = io.stdout_lines().join("\n");
+    assert!(output.contains("ENG-123"));
 }
