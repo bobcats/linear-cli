@@ -15,6 +15,7 @@ pub fn handle_update(
     assignee: Option<String>,
     project: Option<String>,
     state: Option<String>,
+    parent: Option<String>,
     priority: Option<i32>,
     client: &dyn IssueClient,
     config: &dyn ConfigProvider,
@@ -27,6 +28,7 @@ pub fn handle_update(
         && assignee.is_none()
         && project.is_none()
         && state.is_none()
+        && parent.is_none()
         && priority.is_none()
     {
         return Err(CliError::InvalidArgs(
@@ -46,7 +48,7 @@ pub fn handle_update(
             project_id: project,
             state_id: state,
             priority,
-            parent_id: None,
+            parent_id: parent,
         },
     )?;
 
