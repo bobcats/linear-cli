@@ -194,6 +194,8 @@ pub struct IssueCreateInput {
     pub state_id: Option<String>,
     #[cynic(skip_serializing_if = "Option::is_none")]
     pub priority: Option<i32>,
+    #[cynic(rename = "parentId", skip_serializing_if = "Option::is_none")]
+    pub parent_id: Option<String>,
 }
 
 /// Issue create mutation variables
@@ -238,6 +240,8 @@ pub struct IssueUpdateInput {
     pub state_id: Option<String>,
     #[cynic(skip_serializing_if = "Option::is_none")]
     pub priority: Option<i32>,
+    #[cynic(rename = "parentId", skip_serializing_if = "Option::is_none")]
+    pub parent_id: Option<String>,
 }
 
 /// Issue update mutation variables
