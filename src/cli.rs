@@ -163,6 +163,10 @@ pub struct IssueUpdatePatchArgs {
     #[arg(long)]
     pub state: Option<String>,
 
+    /// Parent issue identifier (e.g., ENG-123), ID, or null to clear
+    #[arg(long)]
+    pub parent: Option<String>,
+
     /// Priority: 0=None, 1=Urgent, 2=High, 3=Medium, 4=Low
     #[arg(long, value_parser = clap::value_parser!(u8).range(0..=4))]
     pub priority: Option<u8>,
@@ -176,6 +180,7 @@ impl IssueUpdatePatchArgs {
             || self.assignee.is_some()
             || self.project.is_some()
             || self.state.is_some()
+            || self.parent.is_some()
             || self.priority.is_some()
     }
 }
@@ -319,6 +324,10 @@ pub enum IssueCommands {
         /// Workflow state name or ID
         #[arg(long)]
         state: Option<String>,
+
+        /// Parent issue identifier (e.g., ENG-123) or ID
+        #[arg(long)]
+        parent: Option<String>,
 
         /// Priority: 0=None, 1=Urgent, 2=High, 3=Medium, 4=Low
         #[arg(long, value_parser = clap::value_parser!(u8).range(0..=4))]
