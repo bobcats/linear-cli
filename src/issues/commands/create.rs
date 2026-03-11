@@ -18,6 +18,7 @@ pub fn handle_create(
     assignee: Option<String>,
     project: Option<String>,
     state: Option<String>,
+    parent: Option<String>,
     priority: Option<i32>,
     client: &dyn IssueClient,
     config: &dyn ConfigProvider,
@@ -37,7 +38,7 @@ pub fn handle_create(
             project_id: project,
             state_id: state,
             priority,
-            parent_id: None,
+            parent_id: parent,
         },
     )?;
 
