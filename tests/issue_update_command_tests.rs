@@ -175,8 +175,7 @@ fn test_update_returns_invalid_args_when_no_patch_fields() {
     };
 
     let result = handle_update(
-        "ENG-123", None, None, None, None, None, None, None, &client, &config, &storage, &io,
-        None,
+        "ENG-123", None, None, None, None, None, None, None, &client, &config, &storage, &io, None,
     );
 
     assert!(result.is_err());
