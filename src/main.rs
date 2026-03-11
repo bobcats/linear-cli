@@ -162,6 +162,7 @@ fn main() {
                     assignee,
                     project,
                     state,
+                    parent,
                     priority,
                     format,
                 } => handle_issue_create(
@@ -171,6 +172,7 @@ fn main() {
                     assignee,
                     project,
                     state,
+                    parent,
                     priority.map(i32::from),
                     &client as &dyn IssueClient,
                     &config,
@@ -189,6 +191,7 @@ fn main() {
                     patch.assignee,
                     patch.project,
                     patch.state,
+                    patch.parent,
                     patch.priority.map(i32::from),
                     &client as &dyn IssueClient,
                     &config,
