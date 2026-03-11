@@ -14,6 +14,7 @@ fn test_issue_create_mutation_serializes_required_fields() {
             project_id: None,
             state_id: None,
             priority: None,
+            parent_id: None,
         },
     });
 
@@ -35,6 +36,7 @@ fn test_issue_create_mutation_omits_unset_optional_fields() {
             project_id: Some("project-456".to_string()),
             state_id: None,
             priority: Some(2),
+            parent_id: None,
         },
     });
 

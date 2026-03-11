@@ -14,6 +14,7 @@ fn test_issue_update_mutation_serializes_patch_fields() {
             project_id: Some("project-789".to_string()),
             state_id: Some("state-111".to_string()),
             priority: Some(2),
+            parent_id: None,
         },
     });
 
@@ -40,6 +41,7 @@ fn test_issue_update_mutation_omits_unset_optional_patch_fields() {
             project_id: Some("project-789".to_string()),
             state_id: None,
             priority: None,
+            parent_id: None,
         },
     });
 
