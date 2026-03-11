@@ -148,6 +148,7 @@ fn test_update_outputs_full_issue_object_on_success() {
         None,
         None,
         None,
+        None,
         &client,
         &config,
         &storage,
@@ -174,7 +175,8 @@ fn test_update_returns_invalid_args_when_no_patch_fields() {
     };
 
     let result = handle_update(
-        "ENG-123", None, None, None, None, None, None, &client, &config, &storage, &io, None,
+        "ENG-123", None, None, None, None, None, None, None, &client, &config, &storage, &io,
+        None,
     );
 
     assert!(result.is_err());
@@ -206,6 +208,7 @@ fn test_update_propagates_not_found_for_unresolved_reference() {
         Some("unknown-project".to_string()),
         None,
         None,
+        None,
         &client,
         &config,
         &storage,
@@ -218,4 +221,68 @@ fn test_update_propagates_not_found_for_unresolved_reference() {
         CliError::NotFound(msg) => assert!(msg.contains("project")),
         _ => panic!("expected NotFound error"),
     }
+}
+
+#[test]
+fn test_update_with_parent_passes_through_to_client() {
+    let mut values = HashMap::new();
+    values.insert("LINEAR_TOKEN".to_string(), "test_token".to_string());
+
+    let config = TestConfigProvider { values };
+    let storage = MockStorage { token: None };
+    let io = CapturingIo::new();
+    let client = MockUpdateIssueClient {
+        update_result: Ok(sample_issue()),
+    };
+
+    let result = handle_update(
+        "ENG-123",
+        None,
+        None,
+        None,
+        None,
+        None,
+        Some("ENG-100".to_string()),
+        None,
+        &client,
+        &config,
+        &storage,
+        &io,
+        None,
+    );
+
+    assert!(result.is_ok());
+    let output = io.stdout_lines().join("\n");
+    assert!(output.contains("ENG-123"));
+}
+
+#[test]
+fn test_update_with_only_parent_does_not_require_other_fields() {
+    let mut values = HashMap::new();
+    values.insert("LINEAR_TOKEN".to_string(), "test_token".to_string());
+
+    let config = TestConfigProvider { values };
+    let storage = MockStorage { token: None };
+    let io = CapturingIo::new();
+    let client = MockUpdateIssueClient {
+        update_result: Ok(sample_issue()),
+    };
+
+    let result = handle_update(
+        "ENG-123",
+        None,
+        None,
+        None,
+        None,
+        None,
+        Some("ENG-100".to_string()),
+        None,
+        &client,
+        &config,
+        &storage,
+        &io,
+        None,
+    );
+
+    assert!(result.is_ok());
 }
