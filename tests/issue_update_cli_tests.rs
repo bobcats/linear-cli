@@ -68,3 +68,17 @@ fn test_issue_update_requires_at_least_one_patch_field() {
         .failure()
         .stderr(predicate::str::contains("at least one"));
 }
+
+#[test]
+fn test_issue_update_accepts_parent_flag() {
+    Command::cargo_bin("linear-cli")
+        .unwrap()
+        .arg("issue")
+        .arg("update")
+        .arg("ENG-123")
+        .arg("--parent")
+        .arg("ENG-100")
+        .arg("--help")
+        .assert()
+        .success();
+}

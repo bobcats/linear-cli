@@ -81,3 +81,20 @@ fn test_issue_create_rejects_out_of_range_priority() {
         .failure()
         .stderr(predicate::str::contains("priority"));
 }
+
+#[test]
+fn test_issue_create_accepts_parent_flag() {
+    Command::cargo_bin("linear-cli")
+        .unwrap()
+        .arg("issue")
+        .arg("create")
+        .arg("--team")
+        .arg("ENG")
+        .arg("--title")
+        .arg("Sub-issue")
+        .arg("--parent")
+        .arg("ENG-100")
+        .arg("--help")
+        .assert()
+        .success();
+}
