@@ -12,6 +12,7 @@ struct MockLookup {
     team_by_key: HashMap<String, String>,
     project_by_slug: HashMap<String, String>,
     state_by_name: HashMap<String, String>,
+    issue_by_identifier: HashMap<String, String>,
     call_log: Arc<Mutex<Vec<String>>>,
     viewer_error: Option<CliError>,
 }
@@ -34,6 +35,9 @@ impl MockLookup {
         lookup
             .state_by_name
             .insert("In Progress".to_string(), "state-2".to_string());
+        lookup
+            .issue_by_identifier
+            .insert("ENG-456".to_string(), "issue-uuid-456".to_string());
         lookup
     }
 
@@ -101,6 +105,18 @@ impl IssueReferenceLookup for MockLookup {
             .push(format!("resolve_state_id_by_name:{name}"));
         Ok(self.state_by_name.get(name).cloned())
     }
+
+    fn resolve_issue_id_by_identifier(
+        &self,
+        _token: &str,
+        identifier: &str,
+    ) -> Result<Option<String>, CliError> {
+        self.call_log
+            .lock()
+            .unwrap()
+            .push(format!("resolve_issue_id_by_identifier:{identifier}"));
+        Ok(self.issue_by_identifier.get(identifier).cloned())
+    }
 }
 
 #[test]
@@ -113,6 +129,7 @@ fn resolves_assignee_me_to_viewer_id() {
         assignee: Some("@me".to_string()),
         project: None,
         state: None,
+        parent: None,
     };
 
     let resolved = resolver.resolve("test-token", &input).unwrap();
@@ -131,6 +148,7 @@ fn resolves_assignee_email_to_user_id() {
         assignee: Some("alice@example.com".to_string()),
         project: None,
         state: None,
+        parent: None,
     };
 
     let resolved = resolver.resolve("test-token", &input).unwrap();
@@ -154,6 +172,7 @@ fn passes_through_uuid_like_assignee_id_without_lookup() {
         assignee: Some(assignee_id.to_string()),
         project: None,
         state: None,
+        parent: None,
     };
 
     let resolved = resolver.resolve("test-token", &input).unwrap();
@@ -177,6 +196,7 @@ fn resolves_team_key_project_slug_and_state_name() {
         assignee: None,
         project: Some("api-platform".to_string()),
         state: Some("In Progress".to_string()),
+        parent: None,
     };
 
     let resolved = resolver.resolve("test-token", &input).unwrap();
@@ -196,6 +216,7 @@ fn unresolved_project_slug_fails_fast_with_not_found() {
         assignee: None,
         project: Some("does-not-exist".to_string()),
         state: None,
+        parent: None,
     };
 
     let error = resolver.resolve("test-token", &input).unwrap_err();
@@ -216,6 +237,7 @@ fn unresolved_state_name_fails_fast_with_not_found() {
         assignee: None,
         project: None,
         state: Some("Not a Real State".to_string()),
+        parent: None,
     };
 
     let error = resolver.resolve("test-token", &input).unwrap_err();
@@ -239,6 +261,7 @@ fn viewer_lookup_auth_error_is_propagated_for_me_resolution() {
         assignee: Some("@me".to_string()),
         project: None,
         state: None,
+        parent: None,
     };
 
     let error = resolver.resolve("test-token", &input).unwrap_err();
@@ -246,5 +269,74 @@ fn viewer_lookup_auth_error_is_propagated_for_me_resolution() {
     match error {
         CliError::AuthError(message) => assert!(message.contains("token invalid")),
         _ => panic!("expected AuthError"),
+    }
+}
+
+#[test]
+fn resolves_parent_identifier_to_issue_id() {
+    let lookup = MockLookup::with_defaults();
+    let resolver = IssueReferenceResolver::new(&lookup);
+
+    let input = ResolveIssueRefsInput {
+        team: None,
+        assignee: None,
+        project: None,
+        state: None,
+        parent: Some("ENG-456".to_string()),
+    };
+
+    let resolved = resolver.resolve("test-token", &input).unwrap();
+
+    assert_eq!(resolved.parent_id.as_deref(), Some("issue-uuid-456"));
+    assert!(
+        lookup
+            .call_log()
+            .contains(&"resolve_issue_id_by_identifier:ENG-456".to_string())
+    );
+}
+
+#[test]
+fn passes_through_uuid_parent_without_lookup() {
+    let lookup = MockLookup::with_defaults();
+    let resolver = IssueReferenceResolver::new(&lookup);
+
+    let parent_uuid = "123e4567-e89b-12d3-a456-426614174000";
+    let input = ResolveIssueRefsInput {
+        team: None,
+        assignee: None,
+        project: None,
+        state: None,
+        parent: Some(parent_uuid.to_string()),
+    };
+
+    let resolved = resolver.resolve("test-token", &input).unwrap();
+
+    assert_eq!(resolved.parent_id.as_deref(), Some(parent_uuid));
+    assert!(
+        !lookup
+            .call_log()
+            .iter()
+            .any(|call| call.starts_with("resolve_issue_id_by_identifier"))
+    );
+}
+
+#[test]
+fn unresolved_parent_identifier_fails_with_not_found() {
+    let lookup = MockLookup::with_defaults();
+    let resolver = IssueReferenceResolver::new(&lookup);
+
+    let input = ResolveIssueRefsInput {
+        team: None,
+        assignee: None,
+        project: None,
+        state: None,
+        parent: Some("UNKNOWN-999".to_string()),
+    };
+
+    let error = resolver.resolve("test-token", &input).unwrap_err();
+
+    match error {
+        CliError::NotFound(message) => assert!(message.contains("parent issue")),
+        _ => panic!("expected NotFound"),
     }
 }

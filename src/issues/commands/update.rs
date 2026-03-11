@@ -46,6 +46,7 @@ pub fn handle_update(
             project_id: project,
             state_id: state,
             priority,
+            parent_id: None,
         },
     )?;
 

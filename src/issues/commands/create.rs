@@ -37,6 +37,7 @@ pub fn handle_create(
             project_id: project,
             state_id: state,
             priority,
+            parent_id: None,
         },
     )?;
 
