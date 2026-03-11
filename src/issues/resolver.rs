@@ -7,6 +7,7 @@ pub struct ResolveIssueRefsInput {
     pub assignee: Option<String>,
     pub project: Option<String>,
     pub state: Option<String>,
+    pub parent: Option<String>,
 }
 
 /// Resolved IDs ready to send in Linear GraphQL mutation inputs.
@@ -16,6 +17,7 @@ pub struct ResolvedIssueRefs {
     pub assignee_id: Option<String>,
     pub project_id: Option<String>,
     pub state_id: Option<String>,
+    pub parent_id: Option<String>,
 }
 
 /// Lookup operations required to resolve user-friendly references to IDs.
@@ -38,6 +40,12 @@ pub trait IssueReferenceLookup: Send + Sync {
 
     fn resolve_state_id_by_name(&self, token: &str, name: &str)
     -> Result<Option<String>, CliError>;
+
+    fn resolve_issue_id_by_identifier(
+        &self,
+        token: &str,
+        identifier: &str,
+    ) -> Result<Option<String>, CliError>;
 }
 
 /// Resolves user-facing references (e.g. `@me`, emails, team keys) into IDs.
@@ -60,12 +68,14 @@ impl<'a> IssueReferenceResolver<'a> {
         let team_id = self.resolve_team(token, input.team.as_deref())?;
         let project_id = self.resolve_project(token, input.project.as_deref())?;
         let state_id = self.resolve_state(token, input.state.as_deref())?;
+        let parent_id = self.resolve_parent(token, input.parent.as_deref())?;
 
         Ok(ResolvedIssueRefs {
             team_id,
             assignee_id,
             project_id,
             state_id,
+            parent_id,
         })
     }
 
@@ -148,6 +158,23 @@ impl<'a> IssueReferenceResolver<'a> {
             .ok_or_else(|| CliError::NotFound(format!("state not found for name: {value}")))?;
 
         Ok(Some(state_id))
+    }
+
+    fn resolve_parent(&self, token: &str, value: Option<&str>) -> Result<Option<String>, CliError> {
+        let Some(value) = value else {
+            return Ok(None);
+        };
+
+        if is_uuid_like(value) {
+            return Ok(Some(value.to_string()));
+        }
+
+        let parent_id = self
+            .lookup
+            .resolve_issue_id_by_identifier(token, value)?
+            .ok_or_else(|| CliError::NotFound(format!("parent issue not found: {value}")))?;
+
+        Ok(Some(parent_id))
     }
 }
 
