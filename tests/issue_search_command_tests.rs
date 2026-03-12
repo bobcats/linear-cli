@@ -72,6 +72,7 @@ fn make_issue(identifier: &str, title: &str) -> Issue {
         state: IssueState {
             id: "state-1".to_string(),
             name: "In Progress".to_string(),
+            state_type: "started".to_string(),
         },
         assignee: None,
         creator: User {
@@ -83,6 +84,8 @@ fn make_issue(identifier: &str, title: &str) -> Issue {
         updated_at: "2025-01-01T00:00:00Z".to_string(),
         url: format!("https://linear.app/issue/{identifier}"),
         project: None,
+        parent: None,
+        children: None,
         comments: None,
     }
 }

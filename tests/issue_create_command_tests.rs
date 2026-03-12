@@ -104,6 +104,7 @@ fn sample_issue() -> Issue {
         state: IssueState {
             id: "state-1".to_string(),
             name: "Todo".to_string(),
+            state_type: "started".to_string(),
         },
         priority: Priority::High,
         assignee: Some(User {
@@ -120,6 +121,8 @@ fn sample_issue() -> Issue {
         created_at: "2026-02-23T00:00:00Z".to_string(),
         updated_at: "2026-02-23T00:00:00Z".to_string(),
         url: "https://linear.app/company/issue/ENG-123".to_string(),
+        parent: None,
+        children: None,
         comments: None,
     }
 }

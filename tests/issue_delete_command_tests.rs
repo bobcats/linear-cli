@@ -98,6 +98,7 @@ fn sample_issue() -> Issue {
         state: IssueState {
             id: "state-1".to_string(),
             name: "Todo".to_string(),
+            state_type: "started".to_string(),
         },
         assignee: None,
         creator: User {
@@ -109,6 +110,8 @@ fn sample_issue() -> Issue {
         updated_at: "2025-01-01T00:00:00Z".to_string(),
         url: "https://linear.app/issue/ENG-123".to_string(),
         project: None,
+        parent: None,
+        children: None,
         comments: None,
     }
 }

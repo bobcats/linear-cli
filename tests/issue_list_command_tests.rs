@@ -81,6 +81,7 @@ fn dummy_issue() -> Issue {
         state: IssueState {
             id: "state-1".to_string(),
             name: "Todo".to_string(),
+            state_type: "unstarted".to_string(),
         },
         priority: Priority::None,
         assignee: None,
@@ -93,6 +94,8 @@ fn dummy_issue() -> Issue {
         updated_at: "2025-01-01T00:00:00Z".to_string(),
         url: "https://linear.app/issue/DUMMY-1".to_string(),
         project: None,
+        parent: None,
+        children: None,
         comments: None,
     }
 }
@@ -133,6 +136,7 @@ fn test_list_returns_multiple_issues() {
             state: IssueState {
                 id: "state-1".to_string(),
                 name: "Todo".to_string(),
+                state_type: "unstarted".to_string(),
             },
             priority: Priority::Medium,
             assignee: None,
@@ -145,6 +149,8 @@ fn test_list_returns_multiple_issues() {
             updated_at: "2025-01-01T00:00:00Z".to_string(),
             url: "https://linear.app/issue/ENG-123".to_string(),
             project: None,
+            parent: None,
+            children: None,
             comments: None,
         },
         Issue {
@@ -155,6 +161,7 @@ fn test_list_returns_multiple_issues() {
             state: IssueState {
                 id: "state-2".to_string(),
                 name: "In Progress".to_string(),
+                state_type: "started".to_string(),
             },
             priority: Priority::Urgent,
             assignee: Some(User {
@@ -171,6 +178,8 @@ fn test_list_returns_multiple_issues() {
             updated_at: "2025-01-02T00:00:00Z".to_string(),
             url: "https://linear.app/issue/ENG-124".to_string(),
             project: None,
+            parent: None,
+            children: None,
             comments: None,
         },
     ];

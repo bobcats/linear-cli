@@ -11,6 +11,7 @@ fn create_test_issue_full() -> Issue {
         state: IssueState {
             id: "state-1".to_string(),
             name: "In Progress".to_string(),
+            state_type: "started".to_string(),
         },
         priority: Priority::Urgent,
         assignee: Some(User {
@@ -27,6 +28,8 @@ fn create_test_issue_full() -> Issue {
         created_at: "2025-11-01T10:00:00Z".to_string(),
         updated_at: "2025-11-13T09:30:00Z".to_string(),
         url: "https://linear.app/team/issue/ENG-123".to_string(),
+        parent: None,
+        children: None,
         comments: None,
     }
 }
@@ -40,6 +43,7 @@ fn create_test_issue_minimal() -> Issue {
         state: IssueState {
             id: "state-2".to_string(),
             name: "Todo".to_string(),
+            state_type: "unstarted".to_string(),
         },
         priority: Priority::High,
         assignee: None,
@@ -52,6 +56,8 @@ fn create_test_issue_minimal() -> Issue {
         created_at: "2025-11-02T14:00:00Z".to_string(),
         updated_at: "2025-11-02T14:00:00Z".to_string(),
         url: "https://linear.app/team/issue/ENG-124".to_string(),
+        parent: None,
+        children: None,
         comments: None,
     }
 }

@@ -12,6 +12,7 @@ fn test_issue_serializes_to_json() {
         state: IssueState {
             id: "state-1".to_string(),
             name: "In Progress".to_string(),
+            state_type: "started".to_string(),
         },
         priority: Priority::Urgent,
         assignee: Some(User {
@@ -28,6 +29,8 @@ fn test_issue_serializes_to_json() {
         updated_at: "2024-01-16T14:20:00Z".to_string(),
         url: "https://linear.app/company/issue/ENG-123".to_string(),
         project: None,
+        parent: None,
+        children: None,
         comments: None,
     };
 
@@ -50,6 +53,7 @@ fn test_issue_with_no_assignee_serializes() {
         state: IssueState {
             id: "state-1".to_string(),
             name: "Todo".to_string(),
+            state_type: "unstarted".to_string(),
         },
         priority: Priority::None,
         assignee: None,
@@ -62,6 +66,8 @@ fn test_issue_with_no_assignee_serializes() {
         updated_at: "2024-01-15T10:30:00Z".to_string(),
         url: "https://linear.app/company/issue/ENG-124".to_string(),
         project: None,
+        parent: None,
+        children: None,
         comments: None,
     };
 
@@ -82,6 +88,7 @@ fn test_mock_issue_client_returns_configured_issue() {
         state: IssueState {
             id: "state-1".to_string(),
             name: "Todo".to_string(),
+            state_type: "unstarted".to_string(),
         },
         priority: Priority::None,
         assignee: None,
@@ -94,6 +101,8 @@ fn test_mock_issue_client_returns_configured_issue() {
         updated_at: "2024-01-15T10:30:00Z".to_string(),
         url: "https://linear.app/company/issue/ENG-999".to_string(),
         project: None,
+        parent: None,
+        children: None,
         comments: None,
     };
 

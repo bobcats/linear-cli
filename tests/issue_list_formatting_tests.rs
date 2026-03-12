@@ -11,6 +11,7 @@ fn create_test_issue_list() -> IssueList {
         state: IssueState {
             id: "state-1".to_string(),
             name: "In Progress".to_string(),
+            state_type: "started".to_string(),
         },
         priority: Priority::Urgent,
         assignee: Some(User {
@@ -27,6 +28,8 @@ fn create_test_issue_list() -> IssueList {
         updated_at: "2025-11-13T09:30:00Z".to_string(),
         url: "https://linear.app/team/issue/ENG-123".to_string(),
         project: None,
+        parent: None,
+        children: None,
         comments: None,
     };
 
@@ -38,6 +41,7 @@ fn create_test_issue_list() -> IssueList {
         state: IssueState {
             id: "state-2".to_string(),
             name: "Todo".to_string(),
+            state_type: "started".to_string(),
         },
         priority: Priority::High,
         assignee: None,
@@ -50,6 +54,8 @@ fn create_test_issue_list() -> IssueList {
         updated_at: "2025-11-02T14:00:00Z".to_string(),
         url: "https://linear.app/team/issue/ENG-124".to_string(),
         project: None,
+        parent: None,
+        children: None,
         comments: None,
     };
 
@@ -61,6 +67,7 @@ fn create_test_issue_list() -> IssueList {
         state: IssueState {
             id: "state-3".to_string(),
             name: "In Review".to_string(),
+            state_type: "started".to_string(),
         },
         priority: Priority::Urgent,
         assignee: Some(User {
@@ -77,6 +84,8 @@ fn create_test_issue_list() -> IssueList {
         updated_at: "2025-11-10T15:30:00Z".to_string(),
         url: "https://linear.app/team/issue/ENG-125".to_string(),
         project: None,
+        parent: None,
+        children: None,
         comments: None,
     };
 
@@ -127,6 +136,7 @@ fn test_issue_list_to_json_with_single_issue() {
         state: IssueState {
             id: "state-1".to_string(),
             name: "Done".to_string(),
+            state_type: "started".to_string(),
         },
         priority: Priority::Medium,
         assignee: None,
@@ -139,6 +149,8 @@ fn test_issue_list_to_json_with_single_issue() {
         updated_at: "2025-01-01T00:00:00Z".to_string(),
         url: "https://linear.app/test".to_string(),
         project: None,
+        parent: None,
+        children: None,
         comments: None,
     };
 

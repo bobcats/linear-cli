@@ -77,6 +77,7 @@ fn test_view_returns_issue_details_for_valid_identifier() {
         state: IssueState {
             id: "state-1".to_string(),
             name: "In Progress".to_string(),
+            state_type: "started".to_string(),
         },
         priority: Priority::Urgent,
         assignee: Some(User {
@@ -93,6 +94,8 @@ fn test_view_returns_issue_details_for_valid_identifier() {
         updated_at: "2024-01-16T14:20:00Z".to_string(),
         url: "https://linear.app/company/issue/ENG-123".to_string(),
         project: None,
+        parent: None,
+        children: None,
         comments: None,
     };
 
@@ -197,6 +200,7 @@ fn test_view_returns_auth_error_when_no_token() {
         state: IssueState {
             id: "state-1".to_string(),
             name: "Todo".to_string(),
+            state_type: "started".to_string(),
         },
         priority: Priority::None,
         assignee: None,
@@ -209,6 +213,8 @@ fn test_view_returns_auth_error_when_no_token() {
         updated_at: "2024-01-15T10:30:00Z".to_string(),
         url: "https://linear.app/company/issue/ENG-123".to_string(),
         project: None,
+        parent: None,
+        children: None,
         comments: None,
     };
 
