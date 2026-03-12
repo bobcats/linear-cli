@@ -115,6 +115,33 @@ pub struct SubIssue {
     pub assignee_name: Option<String>,
 }
 
+impl SubIssue {
+    /// Map workflow state type to a markdown checkbox symbol.
+    ///
+    /// - completed → `[x]`
+    /// - canceled  → `[-]`
+    /// - started   → `[~]`
+    /// - unstarted → `[ ]`
+    /// - backlog   → `[ ]`
+    /// - triage    → `[?]`
+    #[must_use]
+    pub fn checkbox(&self) -> &'static str {
+        match self.state_type.as_str() {
+            "completed" => "[x]",
+            "canceled" => "[-]",
+            "started" => "[~]",
+            "triage" => "[?]",
+            _ => "[ ]",
+        }
+    }
+
+    /// Returns true if the sub-issue is in a completed state.
+    #[must_use]
+    pub fn is_completed(&self) -> bool {
+        self.state_type == "completed"
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct IssueProject {
     pub id: String,
