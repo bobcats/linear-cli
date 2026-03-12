@@ -3,1316 +3,1351 @@
     {
       "id": "cli_parse_cycle_paths/cycle_current",
       "typical": {
-        "estimate": 28881.601806640625,
+        "estimate": 29604.99072265625,
         "unit": "ns"
       }
     },
     {
       "id": "cli_parse_cycle_paths/cycle_list",
       "typical": {
-        "estimate": 29215.423828125,
+        "estimate": 29292.2666015625,
         "unit": "ns"
       }
     },
     {
       "id": "cli_parse_cycle_paths/cycle_view",
       "typical": {
-        "estimate": 28767.740966796875,
+        "estimate": 29580.77001953125,
         "unit": "ns"
       }
     },
     {
       "id": "cli_parse_issue_paths/issue_create_invalid_priority",
       "typical": {
-        "estimate": 29522.644287109375,
+        "estimate": 29468.180419921875,
         "unit": "ns"
       }
     },
     {
       "id": "cli_parse_issue_paths/issue_create_rich",
       "typical": {
-        "estimate": 32009.65380859375,
+        "estimate": 32238.97265625,
         "unit": "ns"
       }
     },
     {
       "id": "cli_parse_issue_paths/issue_relation_link",
       "typical": {
-        "estimate": 30322.102783203125,
+        "estimate": 31260.45703125,
         "unit": "ns"
       }
     },
     {
       "id": "cli_parse_issue_paths/issue_update_rich",
       "typical": {
-        "estimate": 32453.196533203125,
+        "estimate": 32942.952392578125,
         "unit": "ns"
       }
     },
     {
       "id": "cli_parse_project_paths/project_list",
       "typical": {
-        "estimate": 28880.930419921875,
+        "estimate": 29201.35498046875,
         "unit": "ns"
       }
     },
     {
       "id": "cli_parse_project_paths/project_view",
       "typical": {
-        "estimate": 29037.60791015625,
+        "estimate": 29402.597900390625,
         "unit": "ns"
       }
     },
     {
       "id": "cli_parse_team_paths/team_list",
       "typical": {
-        "estimate": 28330.841064453125,
+        "estimate": 29280.548095703125,
         "unit": "ns"
       }
     },
     {
       "id": "cli_parse_team_paths/team_view",
       "typical": {
-        "estimate": 28842.447998046875,
+        "estimate": 30285.858154296875,
         "unit": "ns"
       }
     },
     {
       "id": "comment_csv",
       "typical": {
-        "estimate": 376.2482795715332,
+        "estimate": 368.33206939697266,
         "unit": "ns"
       }
     },
     {
       "id": "comment_json",
       "typical": {
-        "estimate": 609.107967376709,
+        "estimate": 545.6487350463867,
         "unit": "ns"
       }
     },
     {
       "id": "comment_list/csv/10",
       "typical": {
-        "estimate": 925.9096755981445,
+        "estimate": 886.1471786499023,
         "unit": "ns"
       }
     },
     {
       "id": "comment_list/csv/100",
       "typical": {
-        "estimate": 10928.570983886719,
+        "estimate": 10362.998901367188,
         "unit": "ns"
       }
     },
     {
       "id": "comment_list/csv/50",
       "typical": {
-        "estimate": 5316.466033935547,
+        "estimate": 4964.878112792969,
         "unit": "ns"
       }
     },
     {
       "id": "comment_list/json/10",
       "typical": {
-        "estimate": 2062.690719604492,
+        "estimate": 1915.246322631836,
         "unit": "ns"
       }
     },
     {
       "id": "comment_list/json/100",
       "typical": {
-        "estimate": 15400.86376953125,
+        "estimate": 15073.532104492188,
         "unit": "ns"
       }
     },
     {
       "id": "comment_list/json/50",
       "typical": {
-        "estimate": 8144.9915771484375,
+        "estimate": 7781.377197265625,
         "unit": "ns"
       }
     },
     {
       "id": "comment_list/markdown/10",
       "typical": {
-        "estimate": 607.106372833252,
+        "estimate": 590.9568405151367,
         "unit": "ns"
       }
     },
     {
       "id": "comment_list/markdown/100",
       "typical": {
-        "estimate": 5961.3240966796875,
+        "estimate": 5868.259429931641,
         "unit": "ns"
       }
     },
     {
       "id": "comment_list/markdown/50",
       "typical": {
-        "estimate": 2834.868118286133,
+        "estimate": 2703.716278076172,
         "unit": "ns"
       }
     },
     {
       "id": "comment_list/table/10",
       "typical": {
-        "estimate": 21676.020263671875,
+        "estimate": 16806.4013671875,
         "unit": "ns"
       }
     },
     {
       "id": "comment_list/table/100",
       "typical": {
-        "estimate": 187195.107421875,
+        "estimate": 145051.1064453125,
         "unit": "ns"
       }
     },
     {
       "id": "comment_list/table/50",
       "typical": {
-        "estimate": 95535.7265625,
+        "estimate": 72558.93994140625,
         "unit": "ns"
       }
     },
     {
       "id": "comment_markdown",
       "typical": {
-        "estimate": 106.19858837127686,
+        "estimate": 103.40583419799805,
         "unit": "ns"
       }
     },
     {
       "id": "comment_table",
       "typical": {
-        "estimate": 9439.643737792969,
+        "estimate": 6850.3978271484375,
+        "unit": "ns"
+      }
+    },
+    {
+      "id": "csv_writer_overhead/direct_write_3_fields",
+      "typical": {
+        "estimate": 16.727124571800232,
+        "unit": "ns"
+      }
+    },
+    {
+      "id": "csv_writer_overhead/per_call_writer_3_fields",
+      "typical": {
+        "estimate": 181.6096315383911,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_csv",
       "typical": {
-        "estimate": 500.9352340698242,
+        "estimate": 485.82108306884766,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_current/filter_next/10",
       "typical": {
-        "estimate": 127.2923936843872,
+        "estimate": 123.52466583251953,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_current/filter_next/25",
       "typical": {
-        "estimate": 144.04976272583008,
+        "estimate": 142.51355266571045,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_current/filter_next/50",
       "typical": {
-        "estimate": 127.24034023284912,
+        "estimate": 126.09457874298096,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_current/for_loop/10",
       "typical": {
-        "estimate": 126.47696208953857,
+        "estimate": 123.097975730896,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_current/for_loop/25",
       "typical": {
-        "estimate": 138.82140350341797,
+        "estimate": 134.7750425338745,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_current/for_loop/50",
       "typical": {
-        "estimate": 127.27363967895508,
+        "estimate": 124.8546028137207,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_current/into_iter_find/10",
       "typical": {
-        "estimate": 1228.3379135131836,
+        "estimate": 1178.3256530761719,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_current/into_iter_find/25",
       "typical": {
-        "estimate": 2934.0247802734375,
+        "estimate": 2893.212646484375,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_current/into_iter_find/50",
       "typical": {
-        "estimate": 5657.937408447266,
+        "estimate": 5692.1055908203125,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_current/iter_cloned_find/10",
       "typical": {
-        "estimate": 127.82792091369629,
+        "estimate": 122.32832145690918,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_current/iter_cloned_find/25",
       "typical": {
-        "estimate": 145.20696926116943,
+        "estimate": 138.318021774292,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_current/iter_cloned_find/50",
       "typical": {
-        "estimate": 131.4688539505005,
+        "estimate": 127.16329193115234,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_current/iter_find_clone/10",
       "typical": {
-        "estimate": 127.85561752319336,
+        "estimate": 123.86278247833252,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_current/iter_find_clone/25",
       "typical": {
-        "estimate": 139.20891284942627,
+        "estimate": 139.8462839126587,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_current/iter_find_clone/50",
       "typical": {
-        "estimate": 128.03951740264893,
+        "estimate": 130.3805112838745,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_current/position_index/10",
       "typical": {
-        "estimate": 131.85183238983154,
+        "estimate": 120.74844074249268,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_current/position_index/25",
       "typical": {
-        "estimate": 135.61364078521729,
+        "estimate": 138.67668437957764,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_current/position_index/50",
       "typical": {
-        "estimate": 121.85502052307129,
+        "estimate": 123.10934066772461,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_handlers_format_compare/list_json",
       "typical": {
-        "estimate": 964.6463470458984,
+        "estimate": 894.4813461303711,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_handlers_format_compare/list_table",
       "typical": {
-        "estimate": 6699.1195068359375,
+        "estimate": 5501.490234375,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_handlers_format_compare/view_json",
       "typical": {
-        "estimate": 943.7081069946289,
+        "estimate": 890.2848434448242,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_handlers_format_compare/view_table",
       "typical": {
-        "estimate": 12364.267822265625,
+        "estimate": 9673.1669921875,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_handlers_json/current",
       "typical": {
-        "estimate": 960.9079360961914,
+        "estimate": 903.0580673217773,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_handlers_json/list",
       "typical": {
-        "estimate": 973.4268188476562,
+        "estimate": 925.0462875366211,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_handlers_json/view",
       "typical": {
-        "estimate": 947.2370223999023,
+        "estimate": 884.9995956420898,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_json",
       "typical": {
-        "estimate": 802.6545791625977,
+        "estimate": 711.6203269958496,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_list/csv/10",
       "typical": {
-        "estimate": 2384.5233764648438,
+        "estimate": 2292.8238067626953,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_list/csv/100",
       "typical": {
-        "estimate": 23696.324584960938,
+        "estimate": 22957.616333007812,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_list/csv/50",
       "typical": {
-        "estimate": 11450.993835449219,
+        "estimate": 11138.626098632812,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_list/json/10",
       "typical": {
-        "estimate": 3375.7781677246094,
+        "estimate": 3350.3138427734375,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_list/json/100",
       "typical": {
-        "estimate": 29654.500244140625,
+        "estimate": 29866.903076171875,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_list/json/50",
       "typical": {
-        "estimate": 14956.41064453125,
+        "estimate": 14883.163452148438,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_list/markdown/10",
       "typical": {
-        "estimate": 1503.4472198486328,
+        "estimate": 1558.5848388671875,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_list/markdown/100",
       "typical": {
-        "estimate": 17927.714233398438,
+        "estimate": 18482.99658203125,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_list/markdown/50",
       "typical": {
-        "estimate": 8213.376342773438,
+        "estimate": 8797.709167480469,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_list/table/10",
       "typical": {
-        "estimate": 29012.511962890625,
+        "estimate": 23689.214111328125,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_list/table/100",
       "typical": {
-        "estimate": 261937.58203125,
+        "estimate": 210038.65625,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_list/table/50",
       "typical": {
-        "estimate": 134609.8642578125,
+        "estimate": 112804.0771484375,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_markdown",
       "typical": {
-        "estimate": 224.88006019592285,
+        "estimate": 216.8271541595459,
         "unit": "ns"
       }
     },
     {
       "id": "cycle_table",
       "typical": {
-        "estimate": 14812.983032226562,
+        "estimate": 10640.886901855469,
         "unit": "ns"
       }
     },
     {
       "id": "issue_csv",
       "typical": {
-        "estimate": 382.2533637731121,
+        "estimate": 360.316593170166,
         "unit": "ns"
       }
     },
     {
       "id": "issue_handlers_format_compare/create_json",
       "typical": {
-        "estimate": 1042.6944046020508,
+        "estimate": 955.4042663574219,
         "unit": "ns"
       }
     },
     {
       "id": "issue_handlers_format_compare/create_table",
       "typical": {
-        "estimate": 13225.987670898438,
+        "estimate": 9693.985046386719,
         "unit": "ns"
       }
     },
     {
       "id": "issue_handlers_json/comment_add",
       "typical": {
-        "estimate": 685.555778503418,
+        "estimate": 606.4440422058105,
         "unit": "ns"
       }
     },
     {
       "id": "issue_handlers_json/create",
       "typical": {
-        "estimate": 1098.700210571289,
+        "estimate": 1007.1554260253906,
         "unit": "ns"
       }
     },
     {
       "id": "issue_handlers_json/lifecycle_archive",
       "typical": {
-        "estimate": 1036.9949340820312,
+        "estimate": 931.713752746582,
         "unit": "ns"
       }
     },
     {
       "id": "issue_handlers_json/lifecycle_unarchive",
       "typical": {
-        "estimate": 1043.0116729736328,
+        "estimate": 932.6880798339844,
         "unit": "ns"
       }
     },
     {
       "id": "issue_handlers_json/relation_block",
       "typical": {
-        "estimate": 1045.1323165893555,
+        "estimate": 964.9629516601562,
         "unit": "ns"
       }
     },
     {
       "id": "issue_handlers_json/relation_duplicate",
       "typical": {
-        "estimate": 1054.6163024902344,
+        "estimate": 952.9422073364258,
         "unit": "ns"
       }
     },
     {
       "id": "issue_handlers_json/relation_link",
       "typical": {
-        "estimate": 1050.9583129882812,
+        "estimate": 952.7400207519531,
         "unit": "ns"
       }
     },
     {
       "id": "issue_handlers_json/update",
       "typical": {
-        "estimate": 1123.3727111816406,
+        "estimate": 990.3313369750977,
         "unit": "ns"
       }
     },
     {
       "id": "issue_hierarchy/csv/0",
       "typical": {
-        "estimate": 386.8252159687444,
+        "estimate": 358.834264755249,
         "unit": "ns"
       }
     },
     {
       "id": "issue_hierarchy/csv/25",
       "typical": {
-        "estimate": 538.2399452014281,
+        "estimate": 502.0532684326172,
         "unit": "ns"
       }
     },
     {
       "id": "issue_hierarchy/csv/5",
       "typical": {
-        "estimate": 462.74322321629523,
+        "estimate": 415.8048667907715,
         "unit": "ns"
       }
     },
     {
       "id": "issue_hierarchy/json/0",
       "typical": {
-        "estimate": 751.1315383417909,
+        "estimate": 749.8218231201172,
         "unit": "ns"
       }
     },
     {
       "id": "issue_hierarchy/json/25",
       "typical": {
-        "estimate": 2799.291597239717,
+        "estimate": 2851.681396484375,
         "unit": "ns"
       }
     },
     {
       "id": "issue_hierarchy/json/5",
       "typical": {
-        "estimate": 1230.8033334661445,
+        "estimate": 1257.7517852783203,
         "unit": "ns"
       }
     },
     {
       "id": "issue_hierarchy/markdown/0",
       "typical": {
-        "estimate": 148.30597533279627,
+        "estimate": 150.8880853652954,
         "unit": "ns"
       }
     },
     {
       "id": "issue_hierarchy/markdown/25",
       "typical": {
-        "estimate": 1721.2490529921697,
+        "estimate": 1757.7571563720703,
         "unit": "ns"
       }
     },
     {
       "id": "issue_hierarchy/markdown/5",
       "typical": {
-        "estimate": 486.80917018570005,
+        "estimate": 493.0273666381836,
         "unit": "ns"
       }
     },
     {
       "id": "issue_hierarchy/table/0",
       "typical": {
-        "estimate": 13963.410372300206,
+        "estimate": 9975.540161132812,
         "unit": "ns"
       }
     },
     {
       "id": "issue_hierarchy/table/25",
       "typical": {
-        "estimate": 17987.49153153217,
+        "estimate": 13147.781372070312,
         "unit": "ns"
       }
     },
     {
       "id": "issue_hierarchy/table/5",
       "typical": {
-        "estimate": 16401.1600456178,
+        "estimate": 12028.25927734375,
         "unit": "ns"
       }
     },
     {
       "id": "issue_json",
       "typical": {
-        "estimate": 671.3231347308356,
+        "estimate": 694.6959457397461,
         "unit": "ns"
       }
     },
     {
       "id": "issue_list/csv/10",
       "typical": {
-        "estimate": 1193.9666530365305,
+        "estimate": 1137.4441833496094,
         "unit": "ns"
       }
     },
     {
       "id": "issue_list/csv/100",
       "typical": {
-        "estimate": 10991.025303561815,
+        "estimate": 10380.434753417969,
         "unit": "ns"
       }
     },
     {
       "id": "issue_list/csv/50",
       "typical": {
-        "estimate": 5332.556157345571,
+        "estimate": 5240.940093994141,
         "unit": "ns"
       }
     },
     {
       "id": "issue_list/csv/500",
       "typical": {
-        "estimate": 54097.849351222525,
+        "estimate": 50783.8125,
         "unit": "ns"
       }
     },
     {
       "id": "issue_list/json/10",
       "typical": {
-        "estimate": 3873.207630074357,
+        "estimate": 3964.070587158203,
         "unit": "ns"
       }
     },
     {
       "id": "issue_list/json/100",
       "typical": {
-        "estimate": 34799.64811807794,
+        "estimate": 35793.2333984375,
         "unit": "ns"
       }
     },
     {
       "id": "issue_list/json/50",
       "typical": {
-        "estimate": 17999.37029546321,
+        "estimate": 18808.090087890625,
         "unit": "ns"
       }
     },
     {
       "id": "issue_list/json/500",
       "typical": {
-        "estimate": 168265.43145883776,
+        "estimate": 170340.1298828125,
         "unit": "ns"
       }
     },
     {
       "id": "issue_list/markdown/10",
       "typical": {
-        "estimate": 708.2296175786026,
+        "estimate": 703.8148193359375,
         "unit": "ns"
       }
     },
     {
       "id": "issue_list/markdown/100",
       "typical": {
-        "estimate": 7560.29605589535,
+        "estimate": 7724.983215332031,
         "unit": "ns"
       }
     },
     {
       "id": "issue_list/markdown/50",
       "typical": {
-        "estimate": 3932.597519484061,
+        "estimate": 4152.4454345703125,
         "unit": "ns"
       }
     },
     {
       "id": "issue_list/markdown/500",
       "typical": {
-        "estimate": 39372.70182327795,
+        "estimate": 38609.008544921875,
         "unit": "ns"
       }
     },
     {
       "id": "issue_list/table/10",
       "typical": {
-        "estimate": 21952.383901856356,
+        "estimate": 17907.3486328125,
         "unit": "ns"
       }
     },
     {
       "id": "issue_list/table/100",
       "typical": {
-        "estimate": 193051.16803980432,
+        "estimate": 154140.421875,
         "unit": "ns"
       }
     },
     {
       "id": "issue_list/table/50",
       "typical": {
-        "estimate": 96910.4428734627,
+        "estimate": 78205.119140625,
         "unit": "ns"
       }
     },
     {
       "id": "issue_list/table/500",
       "typical": {
-        "estimate": 980766.0662176536,
+        "estimate": 766054.53125,
         "unit": "ns"
       }
     },
     {
       "id": "issue_markdown",
       "typical": {
-        "estimate": 145.536207117278,
+        "estimate": 150.9369602203369,
         "unit": "ns"
       }
     },
     {
       "id": "issue_reference_resolver/friendly_refs",
       "typical": {
-        "estimate": 46.58728861808777,
+        "estimate": 48.30757713317871,
         "unit": "ns"
       }
     },
     {
       "id": "issue_reference_resolver/uuid_passthrough",
       "typical": {
-        "estimate": 102.53890323638916,
+        "estimate": 103.42101287841797,
         "unit": "ns"
       }
     },
     {
       "id": "issue_table",
       "typical": {
-        "estimate": 14030.977854229426,
+        "estimate": 10555.295349121094,
         "unit": "ns"
       }
     },
     {
       "id": "issue_with_comments/csv/0",
       "typical": {
-        "estimate": 394.12132314679207,
+        "estimate": 376.72178077697754,
         "unit": "ns"
       }
     },
     {
       "id": "issue_with_comments/csv/10",
       "typical": {
-        "estimate": 395.9419393391966,
+        "estimate": 377.970458984375,
         "unit": "ns"
       }
     },
     {
       "id": "issue_with_comments/csv/50",
       "typical": {
-        "estimate": 399.7863472389825,
+        "estimate": 359.37905502319336,
         "unit": "ns"
       }
     },
     {
       "id": "issue_with_comments/json/0",
       "typical": {
-        "estimate": 712.8517391377266,
+        "estimate": 713.3553848266602,
         "unit": "ns"
       }
     },
     {
       "id": "issue_with_comments/json/10",
       "typical": {
-        "estimate": 2129.791364278668,
+        "estimate": 2182.3927612304688,
         "unit": "ns"
       }
     },
     {
       "id": "issue_with_comments/json/50",
       "typical": {
-        "estimate": 7444.266240827304,
+        "estimate": 7446.0068359375,
         "unit": "ns"
       }
     },
     {
       "id": "issue_with_comments/markdown/0",
       "typical": {
-        "estimate": 149.7778388444476,
+        "estimate": 151.2453145980835,
         "unit": "ns"
       }
     },
     {
       "id": "issue_with_comments/markdown/10",
       "typical": {
-        "estimate": 538.9951764443512,
+        "estimate": 530.3510055541992,
         "unit": "ns"
       }
     },
     {
       "id": "issue_with_comments/markdown/50",
       "typical": {
-        "estimate": 1899.2445105132094,
+        "estimate": 1915.341049194336,
         "unit": "ns"
       }
     },
     {
       "id": "issue_with_comments/table/0",
       "typical": {
-        "estimate": 13602.758302431554,
+        "estimate": 10059.285522460938,
         "unit": "ns"
       }
     },
     {
       "id": "issue_with_comments/table/10",
       "typical": {
-        "estimate": 14680.299283406315,
+        "estimate": 10640.772521972656,
         "unit": "ns"
       }
     },
     {
       "id": "issue_with_comments/table/50",
       "typical": {
-        "estimate": 14689.929539068877,
+        "estimate": 10753.71044921875,
         "unit": "ns"
       }
     },
     {
       "id": "project_csv",
       "typical": {
-        "estimate": 609.8818457995395,
+        "estimate": 570.638973236084,
         "unit": "ns"
       }
     },
     {
       "id": "project_handlers_format_compare/list_json",
       "typical": {
-        "estimate": 1209.5041275024414,
+        "estimate": 1100.7150115966797,
         "unit": "ns"
       }
     },
     {
       "id": "project_handlers_format_compare/list_table",
       "typical": {
-        "estimate": 6583.253173828125,
+        "estimate": 5313.185363769531,
         "unit": "ns"
       }
     },
     {
       "id": "project_handlers_format_compare/view_json",
       "typical": {
-        "estimate": 1233.6635513305664,
+        "estimate": 1084.7889556884766,
         "unit": "ns"
       }
     },
     {
       "id": "project_handlers_format_compare/view_table",
       "typical": {
-        "estimate": 20139.19091796875,
+        "estimate": 14037.226196289062,
         "unit": "ns"
       }
     },
     {
       "id": "project_handlers_json/list",
       "typical": {
-        "estimate": 1236.0661926269531,
+        "estimate": 1089.1520233154297,
         "unit": "ns"
       }
     },
     {
       "id": "project_handlers_json/view",
       "typical": {
-        "estimate": 1180.4021301269531,
+        "estimate": 1109.3683319091797,
         "unit": "ns"
       }
     },
     {
       "id": "project_json",
       "typical": {
-        "estimate": 795.7598677920781,
+        "estimate": 797.650016784668,
         "unit": "ns"
       }
     },
     {
       "id": "project_list/csv/10",
       "typical": {
-        "estimate": 1764.2834930419922,
+        "estimate": 1683.8118438720703,
         "unit": "ns"
       }
     },
     {
       "id": "project_list/csv/100",
       "typical": {
-        "estimate": 19488.00146484375,
+        "estimate": 18122.380737304688,
         "unit": "ns"
       }
     },
     {
       "id": "project_list/csv/50",
       "typical": {
-        "estimate": 9016.095458984375,
+        "estimate": 8560.16796875,
         "unit": "ns"
       }
     },
     {
       "id": "project_list/json/10",
       "typical": {
-        "estimate": 4161.401153564453,
+        "estimate": 4118.086456298828,
         "unit": "ns"
       }
     },
     {
       "id": "project_list/json/100",
       "typical": {
-        "estimate": 40788.136962890625,
+        "estimate": 39244.10009765625,
         "unit": "ns"
       }
     },
     {
       "id": "project_list/json/50",
       "typical": {
-        "estimate": 20078.511474609375,
+        "estimate": 19438.974853515625,
         "unit": "ns"
       }
     },
     {
       "id": "project_list/markdown/10",
       "typical": {
-        "estimate": 1261.3652572631836,
+        "estimate": 1253.2501220703125,
         "unit": "ns"
       }
     },
     {
       "id": "project_list/markdown/100",
       "typical": {
-        "estimate": 15304.880737304688,
+        "estimate": 15565.353271484375,
         "unit": "ns"
       }
     },
     {
       "id": "project_list/markdown/50",
       "typical": {
-        "estimate": 6831.062316894531,
+        "estimate": 6844.268859863281,
         "unit": "ns"
       }
     },
     {
       "id": "project_list/table/10",
       "typical": {
-        "estimate": 27405.466796875,
+        "estimate": 22379.791259765625,
         "unit": "ns"
       }
     },
     {
       "id": "project_list/table/100",
       "typical": {
-        "estimate": 237333.736328125,
+        "estimate": 196698.73046875,
         "unit": "ns"
       }
     },
     {
       "id": "project_list/table/50",
       "typical": {
-        "estimate": 121924.072265625,
+        "estimate": 101300.048828125,
         "unit": "ns"
       }
     },
     {
       "id": "project_markdown",
       "typical": {
-        "estimate": 258.472204208374,
+        "estimate": 252.17016410827637,
         "unit": "ns"
       }
     },
     {
       "id": "project_table",
       "typical": {
-        "estimate": 18727.69677734375,
+        "estimate": 13202.331665039062,
         "unit": "ns"
       }
     },
     {
       "id": "table_hotspot_large_rows/project_list_table/1000",
       "typical": {
-        "estimate": 2365662.78125,
+        "estimate": 2126542.328125,
         "unit": "ns"
       }
     },
     {
       "id": "table_hotspot_large_rows/project_list_table/250",
       "typical": {
-        "estimate": 586936.52734375,
+        "estimate": 487574.0546875,
         "unit": "ns"
       }
     },
     {
       "id": "table_hotspot_large_rows/project_list_table/500",
       "typical": {
-        "estimate": 1185316.7265625,
+        "estimate": 1021537.109375,
         "unit": "ns"
       }
     },
     {
       "id": "table_hotspot_large_rows/team_list_table/1000",
       "typical": {
-        "estimate": 1795889.3125,
+        "estimate": 1459092.109375,
         "unit": "ns"
       }
     },
     {
       "id": "table_hotspot_large_rows/team_list_table/250",
       "typical": {
-        "estimate": 456165.5234375,
+        "estimate": 357047.6875,
         "unit": "ns"
       }
     },
     {
       "id": "table_hotspot_large_rows/team_list_table/500",
       "typical": {
-        "estimate": 895820.96875,
+        "estimate": 695696.29296875,
         "unit": "ns"
       }
     },
     {
       "id": "table_hotspot_wide_cells/project_list_table_wide",
       "typical": {
-        "estimate": 980354.8203125,
+        "estimate": 802732.4296875,
         "unit": "ns"
       }
     },
     {
       "id": "table_hotspot_wide_cells/team_list_table_wide",
       "typical": {
-        "estimate": 1002174.8046875,
+        "estimate": 814138.6796875,
+        "unit": "ns"
+      }
+    },
+    {
+      "id": "table_overhead/comfy_ascii_markdown_100_teams",
+      "typical": {
+        "estimate": 92786.47900390625,
+        "unit": "ns"
+      }
+    },
+    {
+      "id": "table_overhead/comfy_utf8_full_100_teams",
+      "typical": {
+        "estimate": 118180.0947265625,
+        "unit": "ns"
+      }
+    },
+    {
+      "id": "table_overhead/raw_string_100_teams",
+      "typical": {
+        "estimate": 866.9805603027344,
         "unit": "ns"
       }
     },
     {
       "id": "team_csv",
       "typical": {
-        "estimate": 303.5732079652316,
+        "estimate": 283.3009567260742,
         "unit": "ns"
       }
     },
     {
       "id": "team_handlers_format_compare/list_json",
       "typical": {
-        "estimate": 762.5605239868164,
+        "estimate": 624.127857208252,
         "unit": "ns"
       }
     },
     {
       "id": "team_handlers_format_compare/list_table",
       "typical": {
-        "estimate": 6052.7305908203125,
+        "estimate": 3841.9901733398438,
         "unit": "ns"
       }
     },
     {
       "id": "team_handlers_format_compare/view_json",
       "typical": {
-        "estimate": 772.7588005065918,
+        "estimate": 611.1934967041016,
         "unit": "ns"
       }
     },
     {
       "id": "team_handlers_format_compare/view_table",
       "typical": {
-        "estimate": 9869.191467285156,
+        "estimate": 7436.973571777344,
         "unit": "ns"
       }
     },
     {
       "id": "team_handlers_json/list",
       "typical": {
-        "estimate": 712.540470123291,
+        "estimate": 643.5182876586914,
         "unit": "ns"
       }
     },
     {
       "id": "team_handlers_json/view",
       "typical": {
-        "estimate": 722.2906761169434,
+        "estimate": 613.5093383789062,
         "unit": "ns"
       }
     },
     {
       "id": "team_json",
       "typical": {
-        "estimate": 459.7013377278221,
+        "estimate": 462.75154876708984,
         "unit": "ns"
       }
     },
     {
       "id": "team_list/csv/10",
       "typical": {
-        "estimate": 914.3889239611249,
+        "estimate": 800.7847518920898,
         "unit": "ns"
       }
     },
     {
       "id": "team_list/csv/100",
       "typical": {
-        "estimate": 7182.3803515051895,
+        "estimate": 6613.44140625,
         "unit": "ns"
       }
     },
     {
       "id": "team_list/csv/50",
       "typical": {
-        "estimate": 3661.986503498283,
+        "estimate": 3272.7496032714844,
         "unit": "ns"
       }
     },
     {
       "id": "team_list/json/10",
       "typical": {
-        "estimate": 1692.9039740322423,
+        "estimate": 1692.2874603271484,
         "unit": "ns"
       }
     },
     {
       "id": "team_list/json/100",
       "typical": {
-        "estimate": 12876.958187345315,
+        "estimate": 12988.428955078125,
         "unit": "ns"
       }
     },
     {
       "id": "team_list/json/50",
       "typical": {
-        "estimate": 6637.671630529304,
+        "estimate": 6772.453369140625,
         "unit": "ns"
       }
     },
     {
       "id": "team_list/markdown/10",
       "typical": {
-        "estimate": 518.5333228878326,
+        "estimate": 500.6130485534668,
         "unit": "ns"
       }
     },
     {
       "id": "team_list/markdown/100",
       "typical": {
-        "estimate": 4937.2689545594,
+        "estimate": 5145.535827636719,
         "unit": "ns"
       }
     },
     {
       "id": "team_list/markdown/50",
       "typical": {
-        "estimate": 2473.228940660787,
+        "estimate": 2468.4111328125,
         "unit": "ns"
       }
     },
     {
       "id": "team_list/table/10",
       "typical": {
-        "estimate": 20632.610194555753,
+        "estimate": 17167.851684570312,
         "unit": "ns"
       }
     },
     {
       "id": "team_list/table/100",
       "typical": {
-        "estimate": 181646.62853816547,
+        "estimate": 140782.3896484375,
         "unit": "ns"
       }
     },
     {
       "id": "team_list/table/50",
       "typical": {
-        "estimate": 91382.78529043667,
+        "estimate": 73316.63037109375,
         "unit": "ns"
       }
     },
     {
       "id": "team_markdown",
       "typical": {
-        "estimate": 106.61476645927121,
+        "estimate": 111.2699499130249,
         "unit": "ns"
       }
     },
     {
       "id": "team_table",
       "typical": {
-        "estimate": 10107.97260367465,
+        "estimate": 7591.252624511719,
         "unit": "ns"
       }
     },
     {
       "id": "write_mutation_build/comment_create",
       "typical": {
-        "estimate": 2736.0878143310547,
+        "estimate": 2686.9017028808594,
         "unit": "ns"
       }
     },
     {
       "id": "write_mutation_build/issue_archive",
       "typical": {
-        "estimate": 11779.668212890625,
+        "estimate": 11623.372314453125,
         "unit": "ns"
       }
     },
     {
       "id": "write_mutation_build/issue_create",
       "typical": {
-        "estimate": 11811.213195800781,
+        "estimate": 11689.366638183594,
         "unit": "ns"
       }
     },
     {
       "id": "write_mutation_build/issue_relation_create",
       "typical": {
-        "estimate": 16083.185913085938,
+        "estimate": 15956.242797851562,
         "unit": "ns"
       }
     },
     {
       "id": "write_mutation_build/issue_unarchive",
       "typical": {
-        "estimate": 11504.178405761719,
+        "estimate": 11445.777770996094,
         "unit": "ns"
       }
     },
     {
       "id": "write_mutation_build/issue_update",
       "typical": {
-        "estimate": 11832.865417480469,
+        "estimate": 11833.43505859375,
         "unit": "ns"
       }
     },
     {
       "id": "write_mutation_build_and_serialize/comment_create",
       "typical": {
-        "estimate": 3025.390625,
+        "estimate": 3052.6796875,
         "unit": "ns"
       }
     },
     {
       "id": "write_mutation_build_and_serialize/issue_archive",
       "typical": {
-        "estimate": 12360.814331054688,
+        "estimate": 12398.188354492188,
         "unit": "ns"
       }
     },
     {
       "id": "write_mutation_build_and_serialize/issue_create",
       "typical": {
-        "estimate": 12607.854248046875,
+        "estimate": 12320.332763671875,
         "unit": "ns"
       }
     },
     {
       "id": "write_mutation_build_and_serialize/issue_relation_create",
       "typical": {
-        "estimate": 16754.475708007812,
+        "estimate": 17231.547119140625,
         "unit": "ns"
       }
     },
     {
       "id": "write_mutation_build_and_serialize/issue_unarchive",
       "typical": {
-        "estimate": 12302.363037109375,
+        "estimate": 12238.220336914062,
         "unit": "ns"
       }
     },
     {
       "id": "write_mutation_build_and_serialize/issue_update",
       "typical": {
-        "estimate": 12900.105590820312,
+        "estimate": 12525.573852539062,
         "unit": "ns"
       }
     }

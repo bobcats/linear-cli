@@ -788,7 +788,11 @@ fn bench_table_overhead(c: &mut Criterion) {
         b.iter(|| {
             let mut table = Table::new();
             table.load_preset(presets::UTF8_FULL);
-            table.set_header(vec![Cell::new("Key"), Cell::new("Name"), Cell::new("Description")]);
+            table.set_header(vec![
+                Cell::new("Key"),
+                Cell::new("Name"),
+                Cell::new("Description"),
+            ]);
             for team in &teams {
                 table.add_row(vec![
                     Cell::new(&team.key),
@@ -804,7 +808,11 @@ fn bench_table_overhead(c: &mut Criterion) {
         b.iter(|| {
             let mut table = Table::new();
             table.load_preset(presets::ASCII_MARKDOWN);
-            table.set_header(vec![Cell::new("Key"), Cell::new("Name"), Cell::new("Description")]);
+            table.set_header(vec![
+                Cell::new("Key"),
+                Cell::new("Name"),
+                Cell::new("Description"),
+            ]);
             for team in &teams {
                 table.add_row(vec![
                     Cell::new(&team.key),
