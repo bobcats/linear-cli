@@ -548,11 +548,28 @@ impl Formattable for Issue {
             "created_at",
             "updated_at",
             "url",
+            "parent",
+            "children",
             "comment_count",
         ])
         .csv_err("Failed to write CSV header")?;
 
-        // Calculate comment count
+        // Calculate parent, children, and comment count
+        let parent_str = self
+            .parent
+            .as_ref()
+            .map(|p| p.identifier.clone())
+            .unwrap_or_default();
+        let children_str = self
+            .children
+            .as_ref()
+            .map(|kids| {
+                kids.iter()
+                    .map(|c| c.identifier.as_str())
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            })
+            .unwrap_or_default();
         let comment_count = self
             .comments
             .as_ref()
@@ -573,6 +590,8 @@ impl Formattable for Issue {
             &self.created_at,
             &self.updated_at,
             &self.url,
+            &parent_str,
+            &children_str,
             &comment_count,
         ])
         .csv_err("Failed to write CSV data")?;
