@@ -56,6 +56,33 @@ pub struct WorkflowState {
     pub state_type: String,
 }
 
+/// Lightweight parent issue reference (avoids recursive Issue fragment)
+#[derive(Debug, Clone, Serialize, QueryFragment)]
+#[cynic(graphql_type = "Issue", schema = "linear")]
+pub struct IssueParentNode {
+    pub id: cynic::Id,
+    pub identifier: String,
+    pub title: String,
+}
+
+/// Lightweight child issue reference for sub-issue display
+#[derive(Debug, Clone, Serialize, QueryFragment)]
+#[cynic(graphql_type = "Issue", schema = "linear")]
+pub struct IssueChildNode {
+    pub id: cynic::Id,
+    pub identifier: String,
+    pub title: String,
+    pub state: WorkflowState,
+    pub assignee: Option<IssueUser>,
+}
+
+/// Connection type for children query
+#[derive(Debug, Clone, Serialize, QueryFragment)]
+#[cynic(graphql_type = "IssueConnection", schema = "linear")]
+pub struct IssueChildConnection {
+    pub nodes: Vec<IssueChildNode>,
+}
+
 /// Issue information
 #[derive(Debug, Clone, Serialize, QueryFragment)]
 #[cynic(graphql_type = "Issue", schema = "linear")]
@@ -74,6 +101,9 @@ pub struct IssueNode {
     #[cynic(rename = "updatedAt")]
     pub updated_at: DateTime,
     pub url: String,
+    pub parent: Option<IssueParentNode>,
+    #[arguments(first: 50)]
+    pub children: IssueChildConnection,
 }
 
 /// Issue query variables
