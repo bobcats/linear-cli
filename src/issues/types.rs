@@ -352,6 +352,30 @@ impl TableFormatter for Issue {
             ));
         }
 
+        if let Some(parent) = &self.parent {
+            rows.push((
+                Cow::Borrowed("Parent"),
+                Cow::Owned(format!("{} — {}", parent.identifier, parent.title)),
+            ));
+        }
+
+        if let Some(children) = &self.children {
+            let completed = children.iter().filter(|c| c.is_completed()).count();
+            rows.push((
+                Cow::Borrowed("Sub-issues"),
+                Cow::Owned(format!(
+                    "{}/{} — {}",
+                    completed,
+                    children.len(),
+                    children
+                        .iter()
+                        .map(|c| c.identifier.as_str())
+                        .collect::<Vec<_>>()
+                        .join(", ")
+                )),
+            ));
+        }
+
         if let Some(desc) = &self.description {
             rows.push((Cow::Borrowed("Description"), Cow::Borrowed(desc.as_str())));
         }
