@@ -27,7 +27,7 @@ serial_test = "3.2"
 tempfile = "3.23"
 assert_cmd = "2.1"
 predicates = "3.1"
-criterion = "0.5"
+criterion = "0.8"
 
 [[bench]]
 name = "formatters"
