@@ -1,6 +1,6 @@
 use crate::error::CliError;
 use crate::output::Formattable;
-use comfy_table::{Cell, Table, presets::UTF8_FULL};
+use comfy_table::{Cell, Table, presets::ASCII_MARKDOWN};
 use serde::{Deserialize, Serialize};
 use std::fmt::Write as FmtWrite;
 
@@ -111,7 +111,7 @@ impl Formattable for AuthStatus {
 
     fn to_table(&self) -> Result<String, CliError> {
         let mut table = Table::new();
-        table.load_preset(UTF8_FULL);
+        table.load_preset(ASCII_MARKDOWN);
 
         // Vertical layout
         table.add_row(vec![
@@ -198,7 +198,7 @@ impl Formattable for LogoutResult {
 
     fn to_table(&self) -> Result<String, CliError> {
         let mut table = Table::new();
-        table.load_preset(UTF8_FULL);
+        table.load_preset(ASCII_MARKDOWN);
 
         table.add_row(vec![
             Cell::new("Status"),

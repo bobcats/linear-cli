@@ -5,7 +5,7 @@ use crate::output::{
     CsvResultExt, Formattable, MarkdownFormatter, TableFormatter, fast_markdown_formatter,
     generic_json_formatter, generic_json_list_formatter, generic_table_formatter,
 };
-use comfy_table::{Table, presets::UTF8_FULL};
+use comfy_table::{Table, presets::ASCII_MARKDOWN};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::fmt::Write as FmtWrite;
@@ -286,7 +286,7 @@ impl Formattable for IssueList {
 
     fn to_table(&self) -> Result<String, CliError> {
         let mut table = Table::new();
-        table.load_preset(UTF8_FULL);
+        table.load_preset(ASCII_MARKDOWN);
 
         // Horizontal layout: column headers
         table.set_header(vec!["ID", "Title", "State", "Priority", "Assignee"]);

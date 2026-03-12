@@ -7,7 +7,7 @@ use crate::error::CliError;
 use crate::output::format::JsonStyle;
 use crate::output::resolve_json_style_with_provider;
 use crate::output::traits::{MarkdownFormatter, StructuredData, TableFormatter};
-use comfy_table::{Cell, Table, presets::UTF8_FULL};
+use comfy_table::{Cell, Table, presets::ASCII_MARKDOWN};
 
 /// Generic JSON formatter for any type that implements StructuredData
 ///
@@ -47,7 +47,7 @@ pub fn generic_json_formatter<T: StructuredData>(data: &T) -> Result<String, Cli
 /// ```
 pub fn generic_table_formatter<T: TableFormatter>(data: &T) -> Result<String, CliError> {
     let mut table = Table::new();
-    table.load_preset(UTF8_FULL);
+    table.load_preset(ASCII_MARKDOWN);
 
     // Add each row from the data
     for (field, value) in data.table_rows() {
@@ -69,7 +69,7 @@ where
     F: FnMut(&T) -> Vec<String>,
 {
     let mut table = Table::new();
-    table.load_preset(UTF8_FULL);
+    table.load_preset(ASCII_MARKDOWN);
     table.set_header(headers.iter().copied().map(Cell::new));
 
     for item in items {
