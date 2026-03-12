@@ -3,7 +3,6 @@ use crate::client::queries::{CycleQuery, CycleQueryVariables, CyclesQuery, Cycle
 use crate::cycles::types::Cycle;
 use crate::error::CliError;
 use cynic::QueryBuilder;
-use cynic::http::ReqwestBlockingExt;
 
 /// Trait for cycle operations with Linear API
 pub trait CycleClient: Send + Sync {
@@ -24,18 +23,8 @@ impl CycleClient for LinearClient {
         // Build the cycle query using Cynic
         let operation = CycleQuery::build(CycleQueryVariables { id: id.to_string() });
 
-        // Execute the query
-        let response = self
-            .client()
-            .post(self.base_url())
-            .header("Authorization", token)
-            .run_graphql(operation)
-            .map_err(|e| CliError::NetworkError(format!("Failed to connect to Linear API: {e}")))?;
-
-        // Check for GraphQL errors
-        if let Some(errors) = response.errors {
-            crate::client::check_graphql_errors(&errors, crate::client::GraphQlErrorType::General)?;
-        }
+        let response =
+            self.execute_query(token, operation, crate::client::GraphQlErrorType::General)?;
 
         // Extract cycle data
         let cycle_node = response
@@ -57,18 +46,8 @@ impl CycleClient for LinearClient {
             first: Some(limit as i32),
         });
 
-        // Execute the query
-        let response = self
-            .client()
-            .post(self.base_url())
-            .header("Authorization", token)
-            .run_graphql(operation)
-            .map_err(|e| CliError::NetworkError(format!("Failed to connect to Linear API: {e}")))?;
-
-        // Check for GraphQL errors
-        if let Some(errors) = response.errors {
-            crate::client::check_graphql_errors(&errors, crate::client::GraphQlErrorType::General)?;
-        }
+        let response =
+            self.execute_query(token, operation, crate::client::GraphQlErrorType::General)?;
 
         // Extract cycles from response
         let cycles_connection = response

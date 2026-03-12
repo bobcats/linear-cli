@@ -5,7 +5,6 @@ use crate::client::queries::{
 use crate::error::CliError;
 use crate::projects::types::Project;
 use cynic::QueryBuilder;
-use cynic::http::ReqwestBlockingExt;
 
 /// Trait for project operations with Linear API
 pub trait ProjectClient: Send + Sync {
@@ -26,18 +25,8 @@ impl ProjectClient for LinearClient {
         // Build the project query using Cynic
         let operation = ProjectQuery::build(ProjectQueryVariables { id: id.to_string() });
 
-        // Execute the query
-        let response = self
-            .client()
-            .post(self.base_url())
-            .header("Authorization", token)
-            .run_graphql(operation)
-            .map_err(|e| CliError::NetworkError(format!("Failed to connect to Linear API: {e}")))?;
-
-        // Check for GraphQL errors
-        if let Some(errors) = response.errors {
-            crate::client::check_graphql_errors(&errors, crate::client::GraphQlErrorType::General)?;
-        }
+        let response =
+            self.execute_query(token, operation, crate::client::GraphQlErrorType::General)?;
 
         // Extract project data
         let project_node = response
@@ -59,18 +48,8 @@ impl ProjectClient for LinearClient {
             first: Some(limit as i32),
         });
 
-        // Execute the query
-        let response = self
-            .client()
-            .post(self.base_url())
-            .header("Authorization", token)
-            .run_graphql(operation)
-            .map_err(|e| CliError::NetworkError(format!("Failed to connect to Linear API: {e}")))?;
-
-        // Check for GraphQL errors
-        if let Some(errors) = response.errors {
-            crate::client::check_graphql_errors(&errors, crate::client::GraphQlErrorType::General)?;
-        }
+        let response =
+            self.execute_query(token, operation, crate::client::GraphQlErrorType::General)?;
 
         // Extract projects from response
         let projects_connection = response

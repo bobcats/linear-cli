@@ -2,7 +2,6 @@ use crate::client::LinearClient;
 use crate::client::queries::ViewerQuery;
 use crate::error::CliError;
 use cynic::QueryBuilder;
-use cynic::http::ReqwestBlockingExt;
 use serde::{Deserialize, Serialize};
 
 /// User information returned from Linear API
@@ -29,18 +28,8 @@ impl AuthClient for LinearClient {
         // Build the viewer query using Cynic
         let operation = ViewerQuery::build(());
 
-        // Execute the query
-        let response = self
-            .client()
-            .post(self.base_url())
-            .header("Authorization", token)
-            .run_graphql(operation)
-            .map_err(|e| CliError::NetworkError(format!("Failed to connect to Linear API: {e}")))?;
-
-        // Check for GraphQL errors
-        if let Some(errors) = response.errors {
-            crate::client::check_graphql_errors(&errors, crate::client::GraphQlErrorType::Auth)?;
-        }
+        let response =
+            self.execute_query(token, operation, crate::client::GraphQlErrorType::Auth)?;
 
         // Extract user info
         let viewer = response
