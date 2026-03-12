@@ -138,6 +138,10 @@ pub struct Issue {
     pub updated_at: String,
     pub url: String,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub parent: Option<ParentIssue>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub children: Option<Vec<SubIssue>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub comments: Option<Vec<Comment>>,
 }
 
@@ -560,6 +564,12 @@ impl TryFrom<queries::IssueNode> for Issue {
     type Error = CliError;
 
     fn try_from(node: queries::IssueNode) -> Result<Self, Self::Error> {
+        let children: Vec<SubIssue> = node
+            .children
+            .nodes
+            .into_iter()
+            .map(Into::into)
+            .collect();
         Ok(Issue {
             id: node.id.inner().to_string(),
             identifier: node.identifier,
@@ -576,6 +586,8 @@ impl TryFrom<queries::IssueNode> for Issue {
             created_at: node.created_at.0,
             updated_at: node.updated_at.0,
             url: node.url,
+            parent: node.parent.map(Into::into),
+            children: if children.is_empty() { None } else { Some(children) },
             comments: None,
         })
     }
@@ -601,6 +613,8 @@ impl TryFrom<queries::SearchIssueNode> for Issue {
             created_at: node.created_at.0,
             updated_at: node.updated_at.0,
             url: node.url,
+            parent: None,
+            children: None,
             comments: None,
         })
     }
