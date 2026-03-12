@@ -35,6 +35,11 @@ fn test_matrix_includes_format_bench_groups_for_all_non_auth_command_families() 
 }
 
 #[test]
+fn test_matrix_includes_issue_hierarchy_benchmark_group() {
+    assert!(FORMATTERS_BENCH.contains("bench_issue_hierarchy"));
+}
+
+#[test]
 fn test_matrix_includes_write_path_bench_groups() {
     assert!(WRITE_OPS_BENCH.contains("write_mutation_build"));
     assert!(WRITE_OPS_BENCH.contains("write_mutation_build_and_serialize"));

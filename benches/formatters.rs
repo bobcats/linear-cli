@@ -1,13 +1,26 @@
 use criterion::{BenchmarkId, Criterion, black_box, criterion_group, criterion_main};
 use linear_cli::comments::types::{Comment, CommentList};
 use linear_cli::cycles::types::{Cycle, CycleList};
-use linear_cli::issues::types::{Issue, IssueList, IssueState, Priority, User};
+use linear_cli::issues::types::{
+    Issue, IssueList, IssueState, ParentIssue, Priority, SubIssue, User,
+};
 use linear_cli::output::Formattable;
 use linear_cli::projects::types::{Project, ProjectList};
 use linear_cli::teams::types::{Team, TeamList};
 
+fn state_name_and_type(id: usize) -> (&'static str, &'static str) {
+    match id % 4 {
+        0 => ("Todo", "unstarted"),
+        1 => ("In Progress", "started"),
+        2 => ("In Review", "started"),
+        _ => ("Done", "completed"),
+    }
+}
+
 /// Helper to create a test issue
 fn create_test_issue(id: usize) -> Issue {
+    let (state_name, state_type) = state_name_and_type(id);
+
     Issue {
         id: format!("issue-{}", id),
         identifier: format!("ENG-{}", id),
@@ -18,13 +31,8 @@ fn create_test_issue(id: usize) -> Issue {
         )),
         state: IssueState {
             id: format!("state-{}", id % 4),
-            name: match id % 4 {
-                0 => "Todo",
-                1 => "In Progress",
-                2 => "In Review",
-                _ => "Done",
-            }
-            .to_string(),
+            name: state_name.to_string(),
+            state_type: state_type.to_string(),
         },
         priority: match id % 5 {
             0 => Priority::None,
@@ -51,8 +59,42 @@ fn create_test_issue(id: usize) -> Issue {
         created_at: "2025-11-01T10:00:00Z".to_string(),
         updated_at: "2025-11-13T14:30:00Z".to_string(),
         url: format!("https://linear.app/team/issue/ENG-{}", id),
+        parent: None,
+        children: None,
         comments: None,
     }
+}
+
+fn create_hierarchical_issue(id: usize, child_count: usize) -> Issue {
+    let mut issue = create_test_issue(id);
+    issue.parent = Some(ParentIssue {
+        id: format!("parent-{id}"),
+        identifier: format!("ENG-{}", id.saturating_sub(1)),
+        title: format!("Parent issue {}", id.saturating_sub(1)),
+    });
+    issue.children = Some(
+        (0..child_count)
+            .map(|offset| {
+                let child_id = id * 100 + offset;
+                let (state_name, state_type) = match offset % 4 {
+                    0 => ("Done", "completed"),
+                    1 => ("In Progress", "started"),
+                    2 => ("Todo", "unstarted"),
+                    _ => ("Canceled", "canceled"),
+                };
+
+                SubIssue {
+                    identifier: format!("ENG-{child_id}"),
+                    title: format!("Sub-task {child_id}"),
+                    state_name: state_name.to_string(),
+                    state_type: state_type.to_string(),
+                    assignee_name: (!offset.is_multiple_of(3))
+                        .then(|| format!("Engineer {}", offset % 10)),
+                }
+            })
+            .collect(),
+    );
+    issue
 }
 
 /// Create a list of test issues
@@ -547,6 +589,41 @@ fn bench_comment_list(c: &mut Criterion) {
     group.finish();
 }
 
+/// Benchmark issue with parent/sub-issue hierarchy rendering.
+fn bench_issue_hierarchy(c: &mut Criterion) {
+    let mut group = c.benchmark_group("issue_hierarchy");
+
+    for child_count in [0, 5, 25].iter() {
+        let issue = if *child_count == 0 {
+            create_test_issue(321)
+        } else {
+            create_hierarchical_issue(321, *child_count)
+        };
+
+        group.bench_with_input(BenchmarkId::new("json", child_count), &issue, |b, issue| {
+            b.iter(|| black_box(issue.to_json().unwrap()))
+        });
+
+        group.bench_with_input(BenchmarkId::new("csv", child_count), &issue, |b, issue| {
+            b.iter(|| black_box(issue.to_csv().unwrap()))
+        });
+
+        group.bench_with_input(
+            BenchmarkId::new("markdown", child_count),
+            &issue,
+            |b, issue| b.iter(|| black_box(issue.to_markdown().unwrap())),
+        );
+
+        group.bench_with_input(
+            BenchmarkId::new("table", child_count),
+            &issue,
+            |b, issue| b.iter(|| black_box(issue.to_table().unwrap())),
+        );
+    }
+
+    group.finish();
+}
+
 /// Benchmark issue with comments - varying comment counts
 fn bench_issue_with_comments(c: &mut Criterion) {
     let mut group = c.benchmark_group("issue_with_comments");
@@ -657,6 +734,7 @@ criterion_group!(
     benches,
     bench_single_issue,
     bench_issue_list,
+    bench_issue_hierarchy,
     bench_issue_with_comments,
     bench_single_team,
     bench_team_list,
