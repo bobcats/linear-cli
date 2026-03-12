@@ -1,24 +1,96 @@
 {
-  "generated_from": "docs/perf/baseline-hotspots.md",
-  "generated_at": "2026-02-24T21:10:00Z",
+  "generated_from": "target_latest/criterion (v0.2.0 main a15e6398, 2026-03-12)",
+  "generated_at": "2026-03-12T00:00:00Z",
   "targets": [
     {
-      "benchmark_id": "project_handlers_json/list",
-      "baseline_ns": 1335.0,
-      "target_ns": 1250.0,
-      "tolerance_percent": 5.0
+      "benchmark_id": "table_hotspot_large_rows/project_list_table/1000",
+      "baseline_ns": 2365662.78,
+      "target_ns": 2365662.78,
+      "tolerance_percent": 10.0
     },
     {
-      "benchmark_id": "project_handlers_json/view",
-      "baseline_ns": 1322.0,
-      "target_ns": 1240.0,
-      "tolerance_percent": 5.0
+      "benchmark_id": "table_hotspot_large_rows/team_list_table/1000",
+      "baseline_ns": 1795889.31,
+      "target_ns": 1795889.31,
+      "tolerance_percent": 10.0
     },
     {
-      "benchmark_id": "issue_handlers_json/create",
-      "baseline_ns": 1123.0,
-      "target_ns": 1090.0,
-      "tolerance_percent": 5.0
+      "benchmark_id": "table_hotspot_large_rows/project_list_table/500",
+      "baseline_ns": 1185316.73,
+      "target_ns": 1185316.73,
+      "tolerance_percent": 10.0
+    },
+    {
+      "benchmark_id": "table_hotspot_wide_cells/team_list_table_wide",
+      "baseline_ns": 1002174.8,
+      "target_ns": 1002174.8,
+      "tolerance_percent": 10.0
+    },
+    {
+      "benchmark_id": "issue_list/table/500",
+      "baseline_ns": 980766.07,
+      "target_ns": 980766.07,
+      "tolerance_percent": 10.0
+    },
+    {
+      "benchmark_id": "table_hotspot_wide_cells/project_list_table_wide",
+      "baseline_ns": 980354.82,
+      "target_ns": 980354.82,
+      "tolerance_percent": 10.0
+    },
+    {
+      "benchmark_id": "table_hotspot_large_rows/team_list_table/500",
+      "baseline_ns": 895820.97,
+      "target_ns": 895820.97,
+      "tolerance_percent": 10.0
+    },
+    {
+      "benchmark_id": "table_hotspot_large_rows/project_list_table/250",
+      "baseline_ns": 586936.53,
+      "target_ns": 586936.53,
+      "tolerance_percent": 10.0
+    },
+    {
+      "benchmark_id": "table_hotspot_large_rows/team_list_table/250",
+      "baseline_ns": 456165.52,
+      "target_ns": 456165.52,
+      "tolerance_percent": 10.0
+    },
+    {
+      "benchmark_id": "cycle_list/table/100",
+      "baseline_ns": 261937.58,
+      "target_ns": 261937.58,
+      "tolerance_percent": 10.0
+    },
+    {
+      "benchmark_id": "project_list/table/100",
+      "baseline_ns": 237333.74,
+      "target_ns": 237333.74,
+      "tolerance_percent": 10.0
+    },
+    {
+      "benchmark_id": "issue_list/table/100",
+      "baseline_ns": 193051.17,
+      "target_ns": 193051.17,
+      "tolerance_percent": 10.0
+    },
+    {
+      "benchmark_id": "comment_list/table/100",
+      "baseline_ns": 187195.11,
+      "target_ns": 187195.11,
+      "tolerance_percent": 10.0
+    },
+    {
+      "benchmark_id": "team_list/table/100",
+      "baseline_ns": 181646.63,
+      "target_ns": 181646.63,
+      "tolerance_percent": 10.0
+    },
+    {
+      "benchmark_id": "issue_list/json/500",
+      "baseline_ns": 168265.43,
+      "target_ns": 168265.43,
+      "tolerance_percent": 10.0
     }
   ]
 }
