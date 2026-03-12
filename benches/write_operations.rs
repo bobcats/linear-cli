@@ -23,6 +23,7 @@ fn issue_create_vars() -> IssueCreateMutationVariables {
             project_id: Some("project-1".to_string()),
             state_id: Some("state-1".to_string()),
             priority: Some(2),
+            parent_id: None,
         },
     }
 }
@@ -37,6 +38,7 @@ fn issue_update_vars() -> IssueUpdateMutationVariables {
             project_id: Some("project-2".to_string()),
             state_id: Some("state-2".to_string()),
             priority: Some(1),
+            parent_id: None,
         },
     }
 }
@@ -185,6 +187,14 @@ impl IssueReferenceLookup for BenchmarkLookup {
     ) -> Result<Option<String>, CliError> {
         Ok(Some("state-from-name".to_string()))
     }
+
+    fn resolve_issue_id_by_identifier(
+        &self,
+        _token: &str,
+        _identifier: &str,
+    ) -> Result<Option<String>, CliError> {
+        Ok(Some("issue-from-identifier".to_string()))
+    }
 }
 
 fn bench_issue_reference_resolver(c: &mut Criterion) {
@@ -196,6 +206,7 @@ fn bench_issue_reference_resolver(c: &mut Criterion) {
         assignee: Some("@me".to_string()),
         project: Some("platform".to_string()),
         state: Some("In Progress".to_string()),
+        parent: None,
     };
 
     let passthrough_input = ResolveIssueRefsInput {
@@ -203,6 +214,7 @@ fn bench_issue_reference_resolver(c: &mut Criterion) {
         assignee: Some("22222222-2222-2222-2222-222222222222".to_string()),
         project: Some("33333333-3333-3333-3333-333333333333".to_string()),
         state: Some("44444444-4444-4444-4444-444444444444".to_string()),
+        parent: None,
     };
 
     let mut group = c.benchmark_group("issue_reference_resolver");

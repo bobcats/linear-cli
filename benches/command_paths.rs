@@ -188,6 +188,7 @@ fn sample_issue() -> Issue {
         state: IssueState {
             id: "state-1".to_string(),
             name: "In Progress".to_string(),
+            state_type: "started".to_string(),
         },
         priority: Priority::High,
         assignee: Some(User {
@@ -204,6 +205,8 @@ fn sample_issue() -> Issue {
         created_at: "2026-02-24T00:00:00Z".to_string(),
         updated_at: "2026-02-24T00:00:00Z".to_string(),
         url: "https://linear.app/company/issue/ENG-123".to_string(),
+        parent: None,
+        children: None,
         comments: None,
     }
 }
@@ -303,6 +306,7 @@ fn bench_issue_handler_paths(c: &mut Criterion) {
                     Some("@me".to_string()),
                     Some("project-1".to_string()),
                     Some("state-1".to_string()),
+                    None,
                     Some(2),
                     &issue_client,
                     &config,
@@ -325,6 +329,7 @@ fn bench_issue_handler_paths(c: &mut Criterion) {
                     Some("user-1".to_string()),
                     Some("project-1".to_string()),
                     Some("state-1".to_string()),
+                    None,
                     Some(1),
                     &issue_client,
                     &config,
@@ -451,6 +456,7 @@ fn bench_issue_handler_paths(c: &mut Criterion) {
                     None,
                     None,
                     None,
+                    None,
                     Some(2),
                     &issue_client,
                     &config,
@@ -470,6 +476,7 @@ fn bench_issue_handler_paths(c: &mut Criterion) {
                     "ENG",
                     "Benchmark create",
                     Some("Description".to_string()),
+                    None,
                     None,
                     None,
                     None,
