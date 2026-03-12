@@ -519,6 +519,29 @@ impl From<queries::WorkflowState> for IssueState {
         IssueState {
             id: state.id.inner().to_string(),
             name: state.name,
+            state_type: state.state_type,
+        }
+    }
+}
+
+impl From<queries::IssueParentNode> for ParentIssue {
+    fn from(node: queries::IssueParentNode) -> Self {
+        ParentIssue {
+            id: node.id.inner().to_string(),
+            identifier: node.identifier,
+            title: node.title,
+        }
+    }
+}
+
+impl From<queries::IssueChildNode> for SubIssue {
+    fn from(node: queries::IssueChildNode) -> Self {
+        SubIssue {
+            identifier: node.identifier,
+            title: node.title,
+            state_name: node.state.name,
+            state_type: node.state.state_type,
+            assignee_name: node.assignee.map(|u| u.name),
         }
     }
 }
