@@ -387,6 +387,12 @@ impl MarkdownFormatter for Issue {
             + self.description.as_ref().map_or(0, |d| d.len())
             + self.creator.name.len()
             + self.url.len()
+            + self.parent.as_ref().map_or(0, |p| 80 + p.identifier.len() + p.title.len())
+            + self.children.as_ref().map_or(0, |c| {
+                c.iter()
+                    .map(|s| 80 + s.identifier.len() + s.title.len())
+                    .sum()
+            })
     }
 
     fn write_markdown(&self, output: &mut String) -> Result<(), CliError> {
@@ -420,6 +426,10 @@ impl MarkdownFormatter for Issue {
             writeln!(output, "**Project:** {}", project.name)
                 .map_err(|e| CliError::General(format!("Failed to write markdown project: {e}")))?;
         }
+        if let Some(parent) = &self.parent {
+            writeln!(output, "**Parent:** {} — {}", parent.identifier, parent.title)
+                .map_err(|e| CliError::General(format!("Failed to write markdown parent: {e}")))?;
+        }
         writeln!(output).map_err(|e| CliError::General(format!("Failed to write newline: {e}")))?;
 
         // Description section
@@ -434,6 +444,31 @@ impl MarkdownFormatter for Issue {
             write!(output, "[No description]\n\n").map_err(|e| {
                 CliError::General(format!("Failed to write markdown placeholder: {e}"))
             })?;
+        }
+
+        // Sub-issues section (if present)
+        if let Some(children) = &self.children {
+            let completed = children.iter().filter(|c| c.is_completed()).count();
+            writeln!(output, "## Sub-issues ({}/{})\n", completed, children.len())
+                .map_err(|e| CliError::General(format!("Failed to write sub-issues header: {e}")))?;
+            for child in children {
+                let assignee_suffix = child
+                    .assignee_name
+                    .as_deref()
+                    .map(|name| format!(" — @{name}"))
+                    .unwrap_or_default();
+                writeln!(
+                    output,
+                    "- {} {} {}{}",
+                    child.checkbox(),
+                    child.identifier,
+                    child.title,
+                    assignee_suffix,
+                )
+                .map_err(|e| CliError::General(format!("Failed to write sub-issue: {e}")))?;
+            }
+            writeln!(output)
+                .map_err(|e| CliError::General(format!("Failed to write newline: {e}")))?;
         }
 
         // Details section
