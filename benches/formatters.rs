@@ -731,6 +731,43 @@ fn bench_table_hotspots(c: &mut Criterion) {
     wide_cells.finish();
 }
 
+fn bench_csv_writer_overhead(c: &mut Criterion) {
+    let issue = create_test_issue(1);
+
+    let mut group = c.benchmark_group("csv_writer_overhead");
+
+    group.bench_function("per_call_writer_3_fields", |b| {
+        b.iter(|| {
+            let mut wtr = csv::Writer::from_writer(vec![]);
+            wtr.write_record(["identifier", "title", "state"]).unwrap();
+            wtr.write_record([
+                issue.identifier.as_str(),
+                issue.title.as_str(),
+                issue.state.name.as_str(),
+            ])
+            .unwrap();
+            let data = wtr.into_inner().unwrap();
+            black_box(String::from_utf8(data).unwrap())
+        })
+    });
+
+    group.bench_function("direct_write_3_fields", |b| {
+        b.iter(|| {
+            let mut out = String::with_capacity(256);
+            out.push_str("identifier,title,state\n");
+            out.push_str(&issue.identifier);
+            out.push(',');
+            out.push_str(&issue.title);
+            out.push(',');
+            out.push_str(&issue.state.name);
+            out.push('\n');
+            black_box(out)
+        })
+    });
+
+    group.finish();
+}
+
 fn bench_table_overhead(c: &mut Criterion) {
     let teams: Vec<Team> = (0..100)
         .map(|i| Team {
@@ -815,6 +852,7 @@ criterion_group!(
     bench_single_comment,
     bench_comment_list,
     bench_table_hotspots,
-    bench_table_overhead
+    bench_table_overhead,
+    bench_csv_writer_overhead
 );
 criterion_main!(benches);
