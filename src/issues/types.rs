@@ -562,27 +562,34 @@ impl Formattable for Issue {
         ])
         .csv_err("Failed to write CSV header")?;
 
-        // Calculate parent, children, and comment count
+        // Borrow directly when possible; only allocate when the field exists
         let parent_str = self
             .parent
             .as_ref()
-            .map(|p| p.identifier.clone())
-            .unwrap_or_default();
-        let children_str = self
-            .children
-            .as_ref()
-            .map(|kids| {
-                kids.iter()
+            .map(|p| p.identifier.as_str())
+            .unwrap_or("");
+
+        let children_owned;
+        let children_str = match &self.children {
+            Some(kids) if !kids.is_empty() => {
+                children_owned = kids
+                    .iter()
                     .map(|c| c.identifier.as_str())
                     .collect::<Vec<_>>()
-                    .join(", ")
-            })
-            .unwrap_or_default();
-        let comment_count = self
-            .comments
-            .as_ref()
-            .map(|c| c.len().to_string())
-            .unwrap_or_else(|| "0".to_string());
+                    .join(", ");
+                children_owned.as_str()
+            }
+            _ => "",
+        };
+
+        let count_owned;
+        let comment_str = match &self.comments {
+            Some(c) => {
+                count_owned = c.len().to_string();
+                count_owned.as_str()
+            }
+            None => "0",
+        };
 
         // Write data row
         wtr.write_record([
@@ -598,9 +605,9 @@ impl Formattable for Issue {
             &self.created_at,
             &self.updated_at,
             &self.url,
-            &parent_str,
-            &children_str,
-            &comment_count,
+            parent_str,
+            children_str,
+            comment_str,
         ])
         .csv_err("Failed to write CSV data")?;
 
