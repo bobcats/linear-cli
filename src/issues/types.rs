@@ -94,6 +94,25 @@ pub struct User {
 pub struct IssueState {
     pub id: String,
     pub name: String,
+    pub state_type: String,
+}
+
+/// Lightweight parent issue reference
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ParentIssue {
+    pub id: String,
+    pub identifier: String,
+    pub title: String,
+}
+
+/// Lightweight child issue for sub-issue display
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct SubIssue {
+    pub identifier: String,
+    pub title: String,
+    pub state_name: String,
+    pub state_type: String,
+    pub assignee_name: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
