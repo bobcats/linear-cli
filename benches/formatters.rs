@@ -1,3 +1,4 @@
+use comfy_table::{Cell, Table, presets};
 use criterion::{BenchmarkId, Criterion, black_box, criterion_group, criterion_main};
 use linear_cli::comments::types::{Comment, CommentList};
 use linear_cli::cycles::types::{Cycle, CycleList};
@@ -730,6 +731,74 @@ fn bench_table_hotspots(c: &mut Criterion) {
     wide_cells.finish();
 }
 
+fn bench_table_overhead(c: &mut Criterion) {
+    let teams: Vec<Team> = (0..100)
+        .map(|i| Team {
+            id: format!("team-{i}"),
+            key: format!("T{i:02}"),
+            name: format!("Team {i}"),
+            description: Some(format!("Description for team {i}")),
+            color: Some("#FF6900".to_string()),
+            icon: Some("🔧".to_string()),
+            private: false,
+            created_at: "2026-02-24T00:00:00Z".to_string(),
+        })
+        .collect();
+
+    let mut group = c.benchmark_group("table_overhead");
+
+    group.bench_function("comfy_utf8_full_100_teams", |b| {
+        b.iter(|| {
+            let mut table = Table::new();
+            table.load_preset(presets::UTF8_FULL);
+            table.set_header(vec![Cell::new("Key"), Cell::new("Name"), Cell::new("Description")]);
+            for team in &teams {
+                table.add_row(vec![
+                    Cell::new(&team.key),
+                    Cell::new(&team.name),
+                    Cell::new(team.description.as_deref().unwrap_or("")),
+                ]);
+            }
+            black_box(table.to_string())
+        })
+    });
+
+    group.bench_function("comfy_ascii_markdown_100_teams", |b| {
+        b.iter(|| {
+            let mut table = Table::new();
+            table.load_preset(presets::ASCII_MARKDOWN);
+            table.set_header(vec![Cell::new("Key"), Cell::new("Name"), Cell::new("Description")]);
+            for team in &teams {
+                table.add_row(vec![
+                    Cell::new(&team.key),
+                    Cell::new(&team.name),
+                    Cell::new(team.description.as_deref().unwrap_or("")),
+                ]);
+            }
+            black_box(table.to_string())
+        })
+    });
+
+    group.bench_function("raw_string_100_teams", |b| {
+        b.iter(|| {
+            let mut out = String::with_capacity(8192);
+            out.push_str("Key | Name | Description\n");
+            out.push_str("--- | ---- | -----------\n");
+            for team in &teams {
+                out.push_str(&team.key);
+                out.push_str(" | ");
+                out.push_str(&team.name);
+                out.push_str(" | ");
+                out.push_str(team.description.as_deref().unwrap_or(""));
+                out.push('\n');
+            }
+            black_box(out)
+        })
+    });
+
+    group.finish();
+}
+
 criterion_group!(
     benches,
     bench_single_issue,
@@ -745,6 +814,7 @@ criterion_group!(
     bench_cycle_current,
     bench_single_comment,
     bench_comment_list,
-    bench_table_hotspots
+    bench_table_hotspots,
+    bench_table_overhead
 );
 criterion_main!(benches);
