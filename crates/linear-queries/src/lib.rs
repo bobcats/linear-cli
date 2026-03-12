@@ -52,6 +52,8 @@ pub struct IssueProject {
 pub struct WorkflowState {
     pub id: cynic::Id,
     pub name: String,
+    #[cynic(rename = "type")]
+    pub state_type: String,
 }
 
 /// Issue information
