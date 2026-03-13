@@ -684,7 +684,19 @@ impl TryFrom<queries::IssueNode> for Issue {
     type Error = CliError;
 
     fn try_from(node: queries::IssueNode) -> Result<Self, Self::Error> {
-        let children: Vec<SubIssue> = node.children.nodes.into_iter().map(Into::into).collect();
+        // Linear exposes `subIssueSortOrder` on each child issue, but the
+        // `issue.children(...)` connection itself does not accept manual sort
+        // input. Preserve UI/manual sub-issue ordering by sorting client-side.
+        let mut child_nodes = node.children.nodes;
+        child_nodes.sort_by(|left, right| {
+            match (left.sub_issue_sort_order, right.sub_issue_sort_order) {
+                (Some(left_order), Some(right_order)) => left_order.total_cmp(&right_order),
+                (Some(_), None) => std::cmp::Ordering::Less,
+                (None, Some(_)) => std::cmp::Ordering::Greater,
+                (None, None) => std::cmp::Ordering::Equal,
+            }
+        });
+        let children: Vec<SubIssue> = child_nodes.into_iter().map(Into::into).collect();
         Ok(Issue {
             id: node.id.inner().to_string(),
             identifier: node.identifier,
