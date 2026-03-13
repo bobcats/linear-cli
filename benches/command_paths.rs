@@ -899,7 +899,59 @@ fn bench_cli_parse_paths(c: &mut Criterion) {
         })
     });
 
-    issue_group.bench_function("issue_relation_link", |b| {
+    issue_group.bench_function("issue_create_description_file", |b| {
+        b.iter(|| {
+            black_box(
+                Cli::try_parse_from([
+                    "linear",
+                    "issue",
+                    "create",
+                    "--team",
+                    "ENG",
+                    "--title",
+                    "Benchmark title",
+                    "--description-file",
+                    "/tmp/issue.md",
+                ])
+                .unwrap(),
+            )
+        })
+    });
+
+    issue_group.bench_function("issue_update_description_file", |b| {
+        b.iter(|| {
+            black_box(
+                Cli::try_parse_from([
+                    "linear",
+                    "issue",
+                    "update",
+                    "ENG-123",
+                    "--description-file",
+                    "/tmp/update.md",
+                ])
+                .unwrap(),
+            )
+        })
+    });
+
+    issue_group.bench_function("issue_comment_add_body_file", |b| {
+        b.iter(|| {
+            black_box(
+                Cli::try_parse_from([
+                    "linear",
+                    "issue",
+                    "comment",
+                    "add",
+                    "ENG-123",
+                    "--body-file",
+                    "/tmp/comment.md",
+                ])
+                .unwrap(),
+            )
+        })
+    });
+
+    issue_group.bench_function("issue_relation_link", |b| { 
         b.iter(|| {
             black_box(
                 Cli::try_parse_from([
