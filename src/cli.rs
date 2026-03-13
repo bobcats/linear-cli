@@ -1,4 +1,5 @@
 use clap::{Args, Parser, Subcommand};
+use std::path::PathBuf;
 
 #[derive(Parser, Debug)]
 #[command(name = "linear")]
@@ -148,8 +149,12 @@ pub struct IssueUpdatePatchArgs {
     pub title: Option<String>,
 
     /// New issue description
-    #[arg(long)]
+    #[arg(long, conflicts_with = "description_file")]
     pub description: Option<String>,
+
+    /// Read issue description from a file
+    #[arg(long, value_name = "PATH", conflicts_with = "description")]
+    pub description_file: Option<PathBuf>,
 
     /// Assignee reference (@me, email, ID, or null to clear)
     #[arg(long)]
@@ -177,6 +182,7 @@ impl IssueUpdatePatchArgs {
     pub fn has_any_field(&self) -> bool {
         self.title.is_some()
             || self.description.is_some()
+            || self.description_file.is_some()
             || self.assignee.is_some()
             || self.project.is_some()
             || self.state.is_some()
@@ -258,8 +264,21 @@ pub enum IssueCommentCommands {
         identifier: String,
 
         /// Comment body text
-        #[arg(long)]
-        body: String,
+        #[arg(
+            long,
+            required_unless_present = "body_file",
+            conflicts_with = "body_file"
+        )]
+        body: Option<String>,
+
+        /// Read comment body text from a file
+        #[arg(
+            long,
+            value_name = "PATH",
+            required_unless_present = "body",
+            conflicts_with = "body"
+        )]
+        body_file: Option<PathBuf>,
 
         #[command(flatten)]
         format: FormatFlags,
@@ -310,8 +329,12 @@ pub enum IssueCommands {
         title: String,
 
         /// Issue description
-        #[arg(long)]
+        #[arg(long, conflicts_with = "description_file")]
         description: Option<String>,
+
+        /// Read issue description from a file
+        #[arg(long, value_name = "PATH", conflicts_with = "description")]
+        description_file: Option<PathBuf>,
 
         /// Assignee reference (@me, email, or ID)
         #[arg(long)]
