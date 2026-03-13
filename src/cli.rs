@@ -149,11 +149,11 @@ pub struct IssueUpdatePatchArgs {
     pub title: Option<String>,
 
     /// New issue description
-    #[arg(long, conflicts_with = "description_file")]
+    #[arg(long)]
     pub description: Option<String>,
 
     /// Read issue description from a file
-    #[arg(long, value_name = "PATH", conflicts_with = "description")]
+    #[arg(long, value_name = "PATH")]
     pub description_file: Option<PathBuf>,
 
     /// Assignee reference (@me, email, ID, or null to clear)
@@ -320,11 +320,11 @@ pub enum IssueCommands {
         title: String,
 
         /// Issue description
-        #[arg(long, conflicts_with = "description_file")]
+        #[arg(long)]
         description: Option<String>,
 
         /// Read issue description from a file
-        #[arg(long, value_name = "PATH", conflicts_with = "description")]
+        #[arg(long, value_name = "PATH")]
         description_file: Option<PathBuf>,
 
         /// Assignee reference (@me, email, or ID)
