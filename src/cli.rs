@@ -264,20 +264,11 @@ pub enum IssueCommentCommands {
         identifier: String,
 
         /// Comment body text
-        #[arg(
-            long,
-            required_unless_present = "body_file",
-            conflicts_with = "body_file"
-        )]
+        #[arg(long)]
         body: Option<String>,
 
         /// Read comment body text from a file
-        #[arg(
-            long,
-            value_name = "PATH",
-            required_unless_present = "body",
-            conflicts_with = "body"
-        )]
+        #[arg(long, value_name = "PATH")]
         body_file: Option<PathBuf>,
 
         #[command(flatten)]

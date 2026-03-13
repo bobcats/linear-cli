@@ -4,3 +4,4 @@
 {"type":"config","name":"Optimize CLI parse speed for long-form file flags","metricName":"speed","metricUnit":"s","bestDirection":"lower"}
 {"run":1,"commit":"c42f362","metric":65.3,"metrics":{},"status":"keep","description":"Baseline benchmark for cli_parse_issue_paths including new --description-file and --body-file parse paths (sample-size 20). Secondary mem max RSS: 89718784 bytes (~85.6 MB).","timestamp":1773441154465,"segment":0}
 {"type":"config","name":"Optimize parse latency for issue_comment_add_body_file","metricName":"parse_time","metricUnit":"µs","bestDirection":"lower"}
+{"run":1,"commit":"9ea3ad5","metric":31.116,"metrics":{},"status":"keep","description":"Baseline parse latency for cli_parse_issue_paths/issue_comment_add_body_file (Criterion median estimate). Secondary mem max RSS: 89702400 bytes (~85.6 MB).","timestamp":1773441177910,"segment":0}
