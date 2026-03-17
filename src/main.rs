@@ -36,6 +36,7 @@ use linear_cli::issues::commands::{
     search::handle_search as handle_issue_search,
     view::{ViewDeps, handle_view as handle_issue_view},
 };
+use linear_cli::issues::resolver::IssueReferenceLookup;
 use linear_cli::labels::commands::list::handle_list as handle_label_list;
 use linear_cli::projects::commands::{
     handle_list as handle_project_list, handle_view as handle_project_view,
@@ -207,6 +208,7 @@ fn main() {
                             parent,
                             priority.map(i32::from),
                             &client as &dyn IssueClient,
+                            &client as &dyn IssueReferenceLookup,
                             &config,
                             &storage,
                             &io,
@@ -231,6 +233,7 @@ fn main() {
                                 patch.parent,
                                 patch.priority.map(i32::from),
                                 &client as &dyn IssueClient,
+                                &client as &dyn IssueReferenceLookup,
                                 &config,
                                 &storage,
                                 &io,

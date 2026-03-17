@@ -4,6 +4,9 @@ use crate::auth::token::get_token_with_provider;
 use crate::client::issues::{IssueClient, UpdateIssueInput};
 use crate::error::CliError;
 use crate::io::Io;
+use crate::issues::resolver::{
+    IssueReferenceLookup, IssueReferenceResolver, ResolveIssueRefsInput,
+};
 use crate::output::{OutputFormat, format_output, get_format_with_provider};
 use secrecy::ExposeSecret;
 
@@ -18,6 +21,7 @@ pub fn handle_update(
     parent: Option<String>,
     priority: Option<i32>,
     client: &dyn IssueClient,
+    lookup: &dyn IssueReferenceLookup,
     config: &dyn ConfigProvider,
     storage: &dyn TokenStorage,
     io: &dyn Io,
@@ -38,17 +42,29 @@ pub fn handle_update(
 
     let token = get_token_with_provider(config, storage)?;
 
+    let resolver = IssueReferenceResolver::new(lookup);
+    let resolved = resolver.resolve(
+        token.expose_secret(),
+        &ResolveIssueRefsInput {
+            team: None,
+            assignee,
+            project,
+            state,
+            parent,
+        },
+    )?;
+
     let updated = client.update_issue(
         token.expose_secret(),
         identifier,
         UpdateIssueInput {
             title,
             description,
-            assignee_id: assignee,
-            project_id: project,
-            state_id: state,
+            assignee_id: resolved.assignee_id,
+            project_id: resolved.project_id,
+            state_id: resolved.state_id,
             priority,
-            parent_id: parent,
+            parent_id: resolved.parent_id,
         },
     )?;
 

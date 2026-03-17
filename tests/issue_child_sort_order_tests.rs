@@ -104,5 +104,8 @@ fn issue_try_from_places_children_without_sort_order_after_sorted_children() {
         .map(|child| child.identifier)
         .collect();
 
-    assert_eq!(child_identifiers, vec!["ENG-201", "ENG-202", "ENG-203", "ENG-204"]);
+    assert_eq!(
+        child_identifiers,
+        vec!["ENG-201", "ENG-202", "ENG-203", "ENG-204"]
+    );
 }

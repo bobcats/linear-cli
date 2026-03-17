@@ -25,6 +25,7 @@ use linear_cli::issues::commands::{
     handle_archive, handle_block, handle_comment_add, handle_create, handle_duplicate, handle_link,
     handle_unarchive, handle_update,
 };
+use linear_cli::issues::resolver::IssueReferenceLookup;
 use linear_cli::issues::types::{Issue, IssueState, Priority, User};
 use linear_cli::output::OutputFormat;
 use linear_cli::projects::commands::{
@@ -46,6 +47,50 @@ impl Io for NoopIo {
     fn print(&self, _message: &str) {}
 
     fn print_error(&self, _message: &str) {}
+}
+
+struct PassthroughLookup;
+
+impl IssueReferenceLookup for PassthroughLookup {
+    fn resolve_viewer_id(&self, _token: &str) -> Result<String, CliError> {
+        Ok("viewer-1".to_string())
+    }
+
+    fn resolve_user_id_by_email(
+        &self,
+        _token: &str,
+        _email: &str,
+    ) -> Result<Option<String>, CliError> {
+        Ok(Some("user-1".to_string()))
+    }
+
+    fn resolve_team_id_by_key(&self, _token: &str, _key: &str) -> Result<Option<String>, CliError> {
+        Ok(Some("team-1".to_string()))
+    }
+
+    fn resolve_project_id_by_slug(
+        &self,
+        _token: &str,
+        _slug: &str,
+    ) -> Result<Option<String>, CliError> {
+        Ok(Some("project-1".to_string()))
+    }
+
+    fn resolve_state_id_by_name(
+        &self,
+        _token: &str,
+        _name: &str,
+    ) -> Result<Option<String>, CliError> {
+        Ok(Some("state-1".to_string()))
+    }
+
+    fn resolve_issue_id_by_identifier(
+        &self,
+        _token: &str,
+        _identifier: &str,
+    ) -> Result<Option<String>, CliError> {
+        Ok(Some("issue-1".to_string()))
+    }
 }
 
 fn benchmark_storage() -> MockTokenStorage {
@@ -296,6 +341,8 @@ fn bench_issue_handler_paths(c: &mut Criterion) {
 
     let mut group = c.benchmark_group("issue_handlers_json");
 
+    let lookup = PassthroughLookup;
+
     group.bench_function("create", |b| {
         b.iter(|| {
             black_box(
@@ -309,6 +356,7 @@ fn bench_issue_handler_paths(c: &mut Criterion) {
                     None,
                     Some(2),
                     &issue_client,
+                    &lookup,
                     &config,
                     &storage,
                     &io,
@@ -332,6 +380,7 @@ fn bench_issue_handler_paths(c: &mut Criterion) {
                     None,
                     Some(1),
                     &issue_client,
+                    &lookup,
                     &config,
                     &storage,
                     &io,
@@ -459,6 +508,7 @@ fn bench_issue_handler_paths(c: &mut Criterion) {
                     None,
                     Some(2),
                     &issue_client,
+                    &lookup,
                     &config,
                     &storage,
                     &io,
@@ -482,6 +532,7 @@ fn bench_issue_handler_paths(c: &mut Criterion) {
                     None,
                     Some(2),
                     &issue_client,
+                    &lookup,
                     &config,
                     &storage,
                     &io,
@@ -951,7 +1002,7 @@ fn bench_cli_parse_paths(c: &mut Criterion) {
         })
     });
 
-    issue_group.bench_function("issue_relation_link", |b| { 
+    issue_group.bench_function("issue_relation_link", |b| {
         b.iter(|| {
             black_box(
                 Cli::try_parse_from([

@@ -4,6 +4,9 @@ use crate::auth::token::get_token_with_provider;
 use crate::client::issues::{CreateIssueInput, IssueClient};
 use crate::error::CliError;
 use crate::io::Io;
+use crate::issues::resolver::{
+    IssueReferenceLookup, IssueReferenceResolver, ResolveIssueRefsInput,
+};
 use crate::output::{
     JsonStyle, OutputFormat, format_output, get_format_with_provider,
     resolve_json_style_with_provider,
@@ -21,6 +24,7 @@ pub fn handle_create(
     parent: Option<String>,
     priority: Option<i32>,
     client: &dyn IssueClient,
+    lookup: &dyn IssueReferenceLookup,
     config: &dyn ConfigProvider,
     storage: &dyn TokenStorage,
     io: &dyn Io,
@@ -28,17 +32,29 @@ pub fn handle_create(
 ) -> Result<(), CliError> {
     let token = get_token_with_provider(config, storage)?;
 
+    let resolver = IssueReferenceResolver::new(lookup);
+    let resolved = resolver.resolve(
+        token.expose_secret(),
+        &ResolveIssueRefsInput {
+            team: Some(team.to_string()),
+            assignee,
+            project,
+            state,
+            parent,
+        },
+    )?;
+
     let created = client.create_issue(
         token.expose_secret(),
         CreateIssueInput {
-            team_id: team.to_string(),
+            team_id: resolved.team_id.unwrap_or_else(|| team.to_string()),
             title: title.to_string(),
             description,
-            assignee_id: assignee,
-            project_id: project,
-            state_id: state,
+            assignee_id: resolved.assignee_id,
+            project_id: resolved.project_id,
+            state_id: resolved.state_id,
             priority,
-            parent_id: parent,
+            parent_id: resolved.parent_id,
         },
     )?;
 
