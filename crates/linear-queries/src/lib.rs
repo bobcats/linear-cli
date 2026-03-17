@@ -74,6 +74,8 @@ pub struct IssueChildNode {
     pub title: String,
     pub state: WorkflowState,
     pub assignee: Option<IssueUser>,
+    #[cynic(rename = "subIssueSortOrder")]
+    pub sub_issue_sort_order: Option<f64>,
 }
 
 /// Connection type for children query

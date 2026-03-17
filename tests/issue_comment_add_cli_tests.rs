@@ -41,3 +41,18 @@ fn test_issue_comment_add_requires_body() {
         .failure()
         .stderr(predicate::str::contains("--body"));
 }
+
+#[test]
+fn test_issue_comment_add_accepts_body_file_flag() {
+    Command::cargo_bin("linear-cli")
+        .unwrap()
+        .arg("issue")
+        .arg("comment")
+        .arg("add")
+        .arg("ENG-123")
+        .arg("--body-file")
+        .arg("/tmp/comment.md")
+        .arg("--help")
+        .assert()
+        .success();
+}

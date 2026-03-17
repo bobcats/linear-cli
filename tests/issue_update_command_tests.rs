@@ -5,6 +5,7 @@ use linear_cli::client::issues::{IssueClient, UpdateIssueInput};
 use linear_cli::error::CliError;
 use linear_cli::io::Io;
 use linear_cli::issues::commands::update::handle_update;
+use linear_cli::issues::resolver::IssueReferenceLookup;
 use linear_cli::issues::types::{Issue, IssueState, Priority, User};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
@@ -99,6 +100,50 @@ impl IssueClient for MockUpdateIssueClient {
     }
 }
 
+struct PassthroughLookup;
+
+impl IssueReferenceLookup for PassthroughLookup {
+    fn resolve_viewer_id(&self, _token: &str) -> Result<String, CliError> {
+        Ok("viewer-123".to_string())
+    }
+
+    fn resolve_user_id_by_email(
+        &self,
+        _token: &str,
+        _email: &str,
+    ) -> Result<Option<String>, CliError> {
+        Ok(Some("user-from-email".to_string()))
+    }
+
+    fn resolve_team_id_by_key(&self, _token: &str, _key: &str) -> Result<Option<String>, CliError> {
+        Ok(Some("team-from-key".to_string()))
+    }
+
+    fn resolve_project_id_by_slug(
+        &self,
+        _token: &str,
+        _slug: &str,
+    ) -> Result<Option<String>, CliError> {
+        Ok(Some("project-from-slug".to_string()))
+    }
+
+    fn resolve_state_id_by_name(
+        &self,
+        _token: &str,
+        _name: &str,
+    ) -> Result<Option<String>, CliError> {
+        Ok(Some("state-from-name".to_string()))
+    }
+
+    fn resolve_issue_id_by_identifier(
+        &self,
+        _token: &str,
+        _identifier: &str,
+    ) -> Result<Option<String>, CliError> {
+        Ok(Some("issue-from-identifier".to_string()))
+    }
+}
+
 fn sample_issue() -> Issue {
     Issue {
         id: "issue-1".to_string(),
@@ -153,6 +198,7 @@ fn test_update_outputs_full_issue_object_on_success() {
         None,
         None,
         &client,
+        &PassthroughLookup,
         &config,
         &storage,
         &io,
@@ -178,7 +224,20 @@ fn test_update_returns_invalid_args_when_no_patch_fields() {
     };
 
     let result = handle_update(
-        "ENG-123", None, None, None, None, None, None, None, &client, &config, &storage, &io, None,
+        "ENG-123",
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        &client,
+        &PassthroughLookup,
+        &config,
+        &storage,
+        &io,
+        None,
     );
 
     assert!(result.is_err());
@@ -212,6 +271,7 @@ fn test_update_propagates_not_found_for_unresolved_reference() {
         None,
         None,
         &client,
+        &PassthroughLookup,
         &config,
         &storage,
         &io,
@@ -247,6 +307,7 @@ fn test_update_with_parent_passes_through_to_client() {
         Some("ENG-100".to_string()),
         None,
         &client,
+        &PassthroughLookup,
         &config,
         &storage,
         &io,
@@ -280,6 +341,7 @@ fn test_update_with_only_parent_does_not_require_other_fields() {
         Some("ENG-100".to_string()),
         None,
         &client,
+        &PassthroughLookup,
         &config,
         &storage,
         &io,
@@ -287,4 +349,79 @@ fn test_update_with_only_parent_does_not_require_other_fields() {
     );
 
     assert!(result.is_ok());
+}
+
+#[test]
+fn test_update_resolves_at_me_to_viewer_uuid_before_sending_to_client() {
+    let mut values = HashMap::new();
+    values.insert("LINEAR_TOKEN".to_string(), "test_token".to_string());
+
+    let config = TestConfigProvider { values };
+    let storage = MockStorage { token: None };
+    let io = CapturingIo::new();
+
+    let captured_input: Arc<Mutex<Option<UpdateIssueInput>>> = Arc::new(Mutex::new(None));
+    let captured = captured_input.clone();
+
+    struct CapturingClient {
+        captured: Arc<Mutex<Option<UpdateIssueInput>>>,
+        result: Issue,
+    }
+
+    impl IssueClient for CapturingClient {
+        fn get_issue(&self, _token: &str, _id: &str) -> Result<Issue, CliError> {
+            unreachable!()
+        }
+        fn list_issues(
+            &self,
+            _token: &str,
+            _assignee: Option<String>,
+            _project: Option<String>,
+            _limit: usize,
+        ) -> Result<Vec<Issue>, CliError> {
+            unreachable!()
+        }
+        fn update_issue(
+            &self,
+            _token: &str,
+            _id: &str,
+            input: UpdateIssueInput,
+        ) -> Result<Issue, CliError> {
+            *self.captured.lock().unwrap() = Some(input);
+            Ok(self.result.clone())
+        }
+    }
+
+    let client = CapturingClient {
+        captured,
+        result: sample_issue(),
+    };
+
+    let result = handle_update(
+        "ENG-123",
+        None,
+        None,
+        Some("@me".to_string()),
+        None,
+        None,
+        None,
+        None,
+        &client,
+        &PassthroughLookup,
+        &config,
+        &storage,
+        &io,
+        None,
+    );
+
+    assert!(result.is_ok());
+    let input = captured_input.lock().unwrap();
+    let input = input
+        .as_ref()
+        .expect("update_issue should have been called");
+    assert_eq!(
+        input.assignee_id.as_deref(),
+        Some("viewer-123"),
+        "@me should be resolved to viewer UUID, not passed as raw string"
+    );
 }

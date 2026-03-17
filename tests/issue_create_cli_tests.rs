@@ -98,3 +98,20 @@ fn test_issue_create_accepts_parent_flag() {
         .assert()
         .success();
 }
+
+#[test]
+fn test_issue_create_accepts_description_file_flag() {
+    Command::cargo_bin("linear-cli")
+        .unwrap()
+        .arg("issue")
+        .arg("create")
+        .arg("--team")
+        .arg("ENG")
+        .arg("--title")
+        .arg("Implement write support")
+        .arg("--description-file")
+        .arg("/tmp/issue.md")
+        .arg("--help")
+        .assert()
+        .success();
+}

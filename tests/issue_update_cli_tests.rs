@@ -82,3 +82,17 @@ fn test_issue_update_accepts_parent_flag() {
         .assert()
         .success();
 }
+
+#[test]
+fn test_issue_update_accepts_description_file_flag() {
+    Command::cargo_bin("linear-cli")
+        .unwrap()
+        .arg("issue")
+        .arg("update")
+        .arg("ENG-123")
+        .arg("--description-file")
+        .arg("/tmp/update.md")
+        .arg("--help")
+        .assert()
+        .success();
+}

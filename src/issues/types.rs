@@ -680,11 +680,41 @@ impl From<queries::IssueProject> for IssueProject {
     }
 }
 
+#[doc(hidden)]
+pub fn sort_child_issue_nodes(
+    child_nodes: Vec<queries::IssueChildNode>,
+) -> Vec<queries::IssueChildNode> {
+    let len = child_nodes.len();
+    let mut ordered_children = Vec::with_capacity(len);
+    let mut unordered_children = Vec::with_capacity(len / 4 + 1);
+
+    for child in child_nodes {
+        if child.sub_issue_sort_order.is_some() {
+            ordered_children.push(child);
+        } else {
+            unordered_children.push(child);
+        }
+    }
+
+    ordered_children.sort_unstable_by(|left, right| {
+        // SAFETY: children are pushed here only when `sub_issue_sort_order` is `Some`.
+        let left_order = unsafe { left.sub_issue_sort_order.unwrap_unchecked() };
+        let right_order = unsafe { right.sub_issue_sort_order.unwrap_unchecked() };
+        left_order.total_cmp(&right_order)
+    });
+    ordered_children.extend(unordered_children);
+    ordered_children
+}
+
 impl TryFrom<queries::IssueNode> for Issue {
     type Error = CliError;
 
     fn try_from(node: queries::IssueNode) -> Result<Self, Self::Error> {
-        let children: Vec<SubIssue> = node.children.nodes.into_iter().map(Into::into).collect();
+        // Linear exposes `subIssueSortOrder` on each child issue, but the
+        // `issue.children(...)` connection itself does not accept manual sort
+        // input. Preserve UI/manual sub-issue ordering by sorting client-side.
+        let child_nodes = sort_child_issue_nodes(node.children.nodes);
+        let children: Vec<SubIssue> = child_nodes.into_iter().map(Into::into).collect();
         Ok(Issue {
             id: node.id.inner().to_string(),
             identifier: node.identifier,

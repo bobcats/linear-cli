@@ -36,6 +36,7 @@ use linear_cli::issues::commands::{
     search::handle_search as handle_issue_search,
     view::{ViewDeps, handle_view as handle_issue_view},
 };
+use linear_cli::issues::resolver::IssueReferenceLookup;
 use linear_cli::labels::commands::list::handle_list as handle_label_list;
 use linear_cli::projects::commands::{
     handle_list as handle_project_list, handle_view as handle_project_view,
@@ -47,7 +48,9 @@ use linear_cli::teams::commands::{
 };
 use linear_cli::users::commands::list::handle_list as handle_user_list;
 use secrecy::SecretString;
+use std::fs;
 use std::io::{self, Read};
+use std::path::Path;
 
 /// Read token from stdin if --with-token flag is set
 /// Returns SecretString to minimize exposure window in memory
@@ -62,6 +65,33 @@ fn read_token_from_stdin_if_needed(with_token: bool) -> Option<SecretString> {
         std::process::exit(1);
     }
     Some(SecretString::from(token.trim().to_string()))
+}
+
+fn read_long_form_text(
+    path: &Path,
+    field_name: &str,
+) -> Result<String, linear_cli::error::CliError> {
+    fs::read_to_string(path).map_err(|e| {
+        linear_cli::error::CliError::InvalidArgs(format!(
+            "failed to read --{field_name}-file '{}': {e}",
+            path.display()
+        ))
+    })
+}
+
+fn resolve_inline_or_file(
+    inline: Option<String>,
+    file: Option<std::path::PathBuf>,
+    field_name: &str,
+) -> Result<Option<String>, linear_cli::error::CliError> {
+    match (inline, file) {
+        (Some(text), None) => Ok(Some(text)),
+        (None, Some(path)) => Ok(Some(read_long_form_text(&path, field_name)?)),
+        (None, None) => Ok(None),
+        (Some(_), Some(_)) => Err(linear_cli::error::CliError::InvalidArgs(format!(
+            "--{field_name} and --{field_name}-file cannot be used together"
+        ))),
+    }
 }
 
 fn main() {
@@ -159,46 +189,58 @@ fn main() {
                     team,
                     title,
                     description,
+                    description_file,
                     assignee,
                     project,
                     state,
                     parent,
                     priority,
                     format,
-                } => handle_issue_create(
-                    &team,
-                    &title,
-                    description,
-                    assignee,
-                    project,
-                    state,
-                    parent,
-                    priority.map(i32::from),
-                    &client as &dyn IssueClient,
-                    &config,
-                    &storage,
-                    &io,
-                    format.to_format(),
+                } => resolve_inline_or_file(description, description_file, "description").and_then(
+                    |description| {
+                        handle_issue_create(
+                            &team,
+                            &title,
+                            description,
+                            assignee,
+                            project,
+                            state,
+                            parent,
+                            priority.map(i32::from),
+                            &client as &dyn IssueClient,
+                            &client as &dyn IssueReferenceLookup,
+                            &config,
+                            &storage,
+                            &io,
+                            format.to_format(),
+                        )
+                    },
                 ),
                 IssueCommands::Update {
                     identifier,
                     patch,
                     format,
-                } => handle_issue_update(
-                    &identifier,
-                    patch.title,
-                    patch.description,
-                    patch.assignee,
-                    patch.project,
-                    patch.state,
-                    patch.parent,
-                    patch.priority.map(i32::from),
-                    &client as &dyn IssueClient,
-                    &config,
-                    &storage,
-                    &io,
-                    format.to_format(),
-                ),
+                } => {
+                    resolve_inline_or_file(patch.description, patch.description_file, "description")
+                        .and_then(|description| {
+                            handle_issue_update(
+                                &identifier,
+                                patch.title,
+                                description,
+                                patch.assignee,
+                                patch.project,
+                                patch.state,
+                                patch.parent,
+                                patch.priority.map(i32::from),
+                                &client as &dyn IssueClient,
+                                &client as &dyn IssueReferenceLookup,
+                                &config,
+                                &storage,
+                                &io,
+                                format.to_format(),
+                            )
+                        })
+                }
                 IssueCommands::Search {
                     term,
                     team,
@@ -303,16 +345,25 @@ fn main() {
                     IssueCommentCommands::Add {
                         identifier,
                         body,
+                        body_file,
                         format,
-                    } => handle_issue_comment_add(
-                        &identifier,
-                        &body,
-                        &client as &dyn CommentClient,
-                        &config,
-                        &storage,
-                        &io,
-                        format.to_format(),
-                    ),
+                    } => resolve_inline_or_file(body, body_file, "body").and_then(|body| {
+                        let body = body.ok_or_else(|| {
+                            linear_cli::error::CliError::InvalidArgs(
+                                "either --body or --body-file is required".to_string(),
+                            )
+                        })?;
+
+                        handle_issue_comment_add(
+                            &identifier,
+                            &body,
+                            &client as &dyn CommentClient,
+                            &config,
+                            &storage,
+                            &io,
+                            format.to_format(),
+                        )
+                    }),
                 },
                 IssueCommands::Comments {
                     issue_id,

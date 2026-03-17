@@ -1,4 +1,5 @@
 use clap::{Args, Parser, Subcommand};
+use std::path::PathBuf;
 
 #[derive(Parser, Debug)]
 #[command(name = "linear")]
@@ -151,6 +152,10 @@ pub struct IssueUpdatePatchArgs {
     #[arg(long)]
     pub description: Option<String>,
 
+    /// Read issue description from a file
+    #[arg(long, value_name = "PATH")]
+    pub description_file: Option<PathBuf>,
+
     /// Assignee reference (@me, email, ID, or null to clear)
     #[arg(long)]
     pub assignee: Option<String>,
@@ -177,6 +182,7 @@ impl IssueUpdatePatchArgs {
     pub fn has_any_field(&self) -> bool {
         self.title.is_some()
             || self.description.is_some()
+            || self.description_file.is_some()
             || self.assignee.is_some()
             || self.project.is_some()
             || self.state.is_some()
@@ -259,7 +265,11 @@ pub enum IssueCommentCommands {
 
         /// Comment body text
         #[arg(long)]
-        body: String,
+        body: Option<String>,
+
+        /// Read comment body text from a file
+        #[arg(long, value_name = "PATH")]
+        body_file: Option<PathBuf>,
 
         #[command(flatten)]
         format: FormatFlags,
@@ -312,6 +322,10 @@ pub enum IssueCommands {
         /// Issue description
         #[arg(long)]
         description: Option<String>,
+
+        /// Read issue description from a file
+        #[arg(long, value_name = "PATH")]
+        description_file: Option<PathBuf>,
 
         /// Assignee reference (@me, email, or ID)
         #[arg(long)]

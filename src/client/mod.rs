@@ -6,6 +6,7 @@ pub mod issues;
 pub mod labels;
 pub mod projects;
 pub mod queries;
+pub mod reference_lookup;
 pub mod search;
 pub mod semantic_search;
 pub mod states;
