@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-cynic = { version = "3.12", features = ["rkyv"] }
+cynic = { version = "3.13", features = ["rkyv"] }
 serde = { version = "1.0", features = ["derive"] }
 
 [dev-dependencies]
