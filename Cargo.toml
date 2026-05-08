@@ -15,7 +15,7 @@ serde_json = "1.0"
 secrecy = "0.10"
 anyhow = "1.0"
 thiserror = "2.0"
-rpassword = "7.3"
+rpassword = "7.5"
 cynic = { version = "3.12", features = ["http-reqwest-blocking", "rkyv"] }
 linear-queries = { path = "crates/linear-queries" }
 csv = "1.3"
