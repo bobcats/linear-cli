@@ -4,8 +4,8 @@ use linear_cli::auth::config::EnvConfigProvider;
 use linear_cli::auth::storage::KeyringStorage;
 use linear_cli::cli::{
     AuthCommands, Cli, Commands, CycleCommands, IssueCommands, IssueCommentCommands,
-    IssueLifecycleCommands, IssueRelationCommands, LabelCommands, ProjectCommands, StateCommands,
-    TeamCommands, UserCommands,
+    IssueLifecycleCommands, IssueRelationCommands, LabelCommands, MilestoneCommands, ProjectCommands,
+    StateCommands, TeamCommands, UserCommands,
 };
 use linear_cli::client::LinearClient;
 use linear_cli::client::auth::AuthClient;
@@ -195,6 +195,7 @@ fn main() {
                     state,
                     parent,
                     priority,
+                    milestone: _,
                     format,
                 } => resolve_inline_or_file(description, description_file, "description").and_then(
                     |description| {
@@ -480,6 +481,15 @@ fn main() {
                 ),
             }
         }
+        Commands::Milestone { action } => match action {
+            MilestoneCommands::List { .. }
+            | MilestoneCommands::View { .. }
+            | MilestoneCommands::Create { .. }
+            | MilestoneCommands::Update { .. }
+            | MilestoneCommands::Delete { .. } => Err(linear_cli::error::CliError::InvalidArgs(
+                "milestone command handlers are not implemented yet".to_string(),
+            )),
+        },
         Commands::Search {
             query,
             r#type,

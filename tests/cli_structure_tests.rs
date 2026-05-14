@@ -139,6 +139,99 @@ fn test_parse_issue_list_with_assignee() {
         .success();
 }
 
+#[test]
+fn test_parse_milestone_list() {
+    Command::cargo_bin("linear-cli")
+        .unwrap()
+        .arg("milestone")
+        .arg("list")
+        .arg("--project")
+        .arg("APP")
+        .arg("--limit")
+        .arg("10")
+        .arg("--help")
+        .assert()
+        .success();
+}
+
+#[test]
+fn test_parse_milestone_crud() {
+    for command in ["view", "create", "update", "delete"] {
+        Command::cargo_bin("linear-cli")
+            .unwrap()
+            .arg("milestone")
+            .arg(command)
+            .arg("--help")
+            .assert()
+            .success();
+    }
+}
+
+#[test]
+fn test_parse_issue_create_with_milestone() {
+    Command::cargo_bin("linear-cli")
+        .unwrap()
+        .arg("issue")
+        .arg("create")
+        .arg("--team")
+        .arg("ENG")
+        .arg("--title")
+        .arg("Ship beta")
+        .arg("--milestone")
+        .arg("Beta")
+        .arg("--help")
+        .assert()
+        .success();
+}
+
+#[test]
+fn test_parse_issue_update_with_milestone_clear() {
+    Command::cargo_bin("linear-cli")
+        .unwrap()
+        .arg("issue")
+        .arg("update")
+        .arg("ENG-123")
+        .arg("--milestone")
+        .arg("null")
+        .arg("--help")
+        .assert()
+        .success();
+}
+
+#[test]
+fn test_milestone_create_rejects_invalid_target_date_shape() {
+    Command::cargo_bin("linear-cli")
+        .unwrap()
+        .arg("milestone")
+        .arg("create")
+        .arg("--project")
+        .arg("APP")
+        .arg("--name")
+        .arg("Beta")
+        .arg("--target-date")
+        .arg("06/30/2026")
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("YYYY-MM-DD"));
+}
+
+#[test]
+fn test_milestone_create_rejects_invalid_calendar_date() {
+    Command::cargo_bin("linear-cli")
+        .unwrap()
+        .arg("milestone")
+        .arg("create")
+        .arg("--project")
+        .arg("APP")
+        .arg("--name")
+        .arg("Beta")
+        .arg("--target-date")
+        .arg("2026-02-31")
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("valid calendar date"));
+}
+
 // ── Discovery command parsing tests ──
 
 #[test]

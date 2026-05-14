@@ -81,6 +81,11 @@ pub enum Commands {
         #[command(subcommand)]
         action: CycleCommands,
     },
+    /// Project milestone commands
+    Milestone {
+        #[command(subcommand)]
+        action: MilestoneCommands,
+    },
     /// Semantic search across issues, projects, documents, initiatives
     Search {
         /// Search query
@@ -175,6 +180,10 @@ pub struct IssueUpdatePatchArgs {
     /// Priority: 0=None, 1=Urgent, 2=High, 3=Medium, 4=Low
     #[arg(long, value_parser = clap::value_parser!(u8).range(0..=4))]
     pub priority: Option<u8>,
+
+    /// Project milestone reference, or null to clear
+    #[arg(long)]
+    pub milestone: Option<String>,
 }
 
 impl IssueUpdatePatchArgs {
@@ -188,6 +197,7 @@ impl IssueUpdatePatchArgs {
             || self.state.is_some()
             || self.parent.is_some()
             || self.priority.is_some()
+            || self.milestone.is_some()
     }
 }
 
@@ -347,6 +357,10 @@ pub enum IssueCommands {
         #[arg(long, value_parser = clap::value_parser!(u8).range(0..=4))]
         priority: Option<u8>,
 
+        /// Project milestone reference
+        #[arg(long)]
+        milestone: Option<String>,
+
         #[command(flatten)]
         format: FormatFlags,
     },
@@ -487,6 +501,133 @@ pub enum CycleCommands {
         #[command(flatten)]
         format: FormatFlags,
     },
+}
+
+#[derive(Subcommand, Debug)]
+pub enum MilestoneCommands {
+    /// View a milestone by ID, URL, or unique name
+    View {
+        /// Milestone reference
+        reference: String,
+
+        /// Project reference to scope name resolution
+        #[arg(long)]
+        project: Option<String>,
+
+        #[command(flatten)]
+        format: FormatFlags,
+    },
+    /// List milestones
+    List {
+        /// Project reference to scope milestone listing
+        #[arg(long)]
+        project: Option<String>,
+
+        /// Maximum number of milestones to return
+        #[arg(long, default_value = "50")]
+        limit: usize,
+
+        #[command(flatten)]
+        format: FormatFlags,
+    },
+    /// Create a milestone
+    Create {
+        /// Project reference
+        #[arg(long)]
+        project: String,
+
+        /// Milestone name
+        #[arg(long)]
+        name: String,
+
+        /// Milestone description
+        #[arg(long)]
+        description: Option<String>,
+
+        /// Target date in YYYY-MM-DD format
+        #[arg(long, value_parser = parse_timeless_date)]
+        target_date: Option<String>,
+
+        #[command(flatten)]
+        format: FormatFlags,
+    },
+    /// Update a milestone
+    Update {
+        /// Milestone reference
+        reference: String,
+
+        /// Project reference to scope name resolution or move milestone
+        #[arg(long)]
+        project: Option<String>,
+
+        /// New milestone name
+        #[arg(long)]
+        name: Option<String>,
+
+        /// New milestone description
+        #[arg(long)]
+        description: Option<String>,
+
+        /// New target date in YYYY-MM-DD format
+        #[arg(long, value_parser = parse_timeless_date)]
+        target_date: Option<String>,
+
+        #[command(flatten)]
+        format: FormatFlags,
+    },
+    /// Delete a milestone
+    Delete {
+        /// Milestone reference
+        reference: String,
+
+        /// Project reference to scope name resolution
+        #[arg(long)]
+        project: Option<String>,
+
+        #[command(flatten)]
+        format: FormatFlags,
+    },
+}
+
+fn parse_timeless_date(value: &str) -> Result<String, String> {
+    if value.len() != 10
+        || value.as_bytes().get(4) != Some(&b'-')
+        || value.as_bytes().get(7) != Some(&b'-')
+        || !value
+            .chars()
+            .enumerate()
+            .all(|(index, ch)| matches!(index, 4 | 7) || ch.is_ascii_digit())
+    {
+        return Err("date must use YYYY-MM-DD format".to_string());
+    }
+
+    let year: i32 = value[0..4]
+        .parse()
+        .map_err(|_| "date must use YYYY-MM-DD format".to_string())?;
+    let month: u32 = value[5..7]
+        .parse()
+        .map_err(|_| "date must use YYYY-MM-DD format".to_string())?;
+    let day: u32 = value[8..10]
+        .parse()
+        .map_err(|_| "date must use YYYY-MM-DD format".to_string())?;
+
+    let max_day = match month {
+        1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
+        4 | 6 | 9 | 11 => 30,
+        2 if is_leap_year(year) => 29,
+        2 => 28,
+        _ => return Err("date must be a valid calendar date".to_string()),
+    };
+
+    if day == 0 || day > max_day {
+        return Err("date must be a valid calendar date".to_string());
+    }
+
+    Ok(value.to_string())
+}
+
+fn is_leap_year(year: i32) -> bool {
+    (year % 4 == 0 && year % 100 != 0) || year % 400 == 0
 }
 
 #[derive(Subcommand, Debug)]

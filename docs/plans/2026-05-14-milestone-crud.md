@@ -63,7 +63,7 @@ Modify:
 
 ## TDD Rules for This Plan
 
-- [ ] Before implementation, read the `test-driven-development` skill and follow RED → GREEN → REFACTOR for every behavior change.
+- [x] Before implementation, read the `test-driven-development` skill and follow RED → GREEN → REFACTOR for every behavior change.
 - [ ] Never add production code for a task until its failing test has been written and run.
 - [ ] After each GREEN step, run the smallest relevant test first, then the task-level test group.
 - [ ] Commit each task after tests pass; do not batch all work into one final commit.
@@ -74,7 +74,7 @@ Modify:
 - Modify: `tests/cli_structure_tests.rs`
 - Modify after RED: `src/cli.rs`
 
-- [ ] **Step 1: Write failing clap tests for milestone commands**
+- [x] **Step 1: Write failing clap tests for milestone commands**
 
 Add tests like:
 
@@ -173,7 +173,7 @@ fn test_milestone_create_rejects_invalid_calendar_date() {
 }
 ```
 
-- [ ] **Step 2: Run RED command**
+- [x] **Step 2: Run RED command**
 
 Run:
 
@@ -183,7 +183,7 @@ cargo test --test cli_structure_tests milestone -- --nocapture
 
 Expected: FAIL because `milestone` command and/or `--milestone` flags do not exist.
 
-- [ ] **Step 3: Add minimal CLI types**
+- [x] **Step 3: Add minimal CLI types**
 
 In `src/cli.rs`:
 
@@ -198,7 +198,7 @@ In `src/cli.rs`:
 
 Use `String` after parsing for dates in CLI args; GraphQL conversion can wrap validated strings in `TimelessDate` later.
 
-- [ ] **Step 4: Run GREEN command**
+- [x] **Step 4: Run GREEN command**
 
 Run:
 
@@ -208,7 +208,7 @@ cargo test --test cli_structure_tests milestone -- --nocapture
 
 Expected: PASS for new CLI tests.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/cli.rs tests/cli_structure_tests.rs
