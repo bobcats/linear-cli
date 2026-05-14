@@ -223,7 +223,7 @@ git commit -m "feat(cli): add milestone command shape"
 - Modify: `src/lib.rs`
 - Create: `tests/milestone_formatting_tests.rs`
 
-- [ ] **Step 1: Write failing formatter tests**
+- [x] **Step 1: Write failing formatter tests**
 
 Create `tests/milestone_formatting_tests.rs` with a sample milestone and assertions for JSON, CSV, Markdown, and table output:
 
@@ -289,7 +289,7 @@ fn milestone_list_table_includes_progress() {
 }
 ```
 
-- [ ] **Step 2: Run RED command**
+- [x] **Step 2: Run RED command**
 
 Run:
 
@@ -299,7 +299,7 @@ cargo test --test milestone_formatting_tests -- --nocapture
 
 Expected: FAIL because `linear_cli::milestones` does not exist.
 
-- [ ] **Step 3: Implement minimal milestone types and formatters**
+- [x] **Step 3: Implement minimal milestone types and formatters**
 
 Create `src/milestones/mod.rs`:
 
@@ -319,7 +319,7 @@ Create `src/milestones/types.rs` with:
 
 Follow `src/projects/types.rs` style. Keep list CSV/table compact with columns: `id`, `name`, `project`, `status`, `progress`, `target_date`.
 
-- [ ] **Step 4: Run GREEN command**
+- [x] **Step 4: Run GREEN command**
 
 Run:
 
@@ -329,7 +329,7 @@ cargo test --test milestone_formatting_tests -- --nocapture
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib.rs src/milestones tests/milestone_formatting_tests.rs

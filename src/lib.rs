@@ -7,6 +7,7 @@ pub mod error;
 pub mod io;
 pub mod issues;
 pub mod labels;
+pub mod milestones;
 pub mod output;
 pub mod perf;
 pub mod projects;
