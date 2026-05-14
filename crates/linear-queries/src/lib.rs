@@ -570,6 +570,222 @@ pub struct ProjectsQuery {
     pub projects: ProjectConnection,
 }
 
+/// Project milestone status.
+#[derive(cynic::Enum, Debug, Clone, Copy, PartialEq, Eq)]
+#[cynic(schema = "linear", graphql_type = "ProjectMilestoneStatus")]
+pub enum ProjectMilestoneStatus {
+    #[cynic(rename = "done")]
+    Done,
+    #[cynic(rename = "next")]
+    Next,
+    #[cynic(rename = "overdue")]
+    Overdue,
+    #[cynic(rename = "unstarted")]
+    Unstarted,
+}
+
+/// Minimal project information for milestones.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, QueryFragment)]
+#[cynic(graphql_type = "Project", schema = "linear")]
+pub struct ProjectMilestoneProject {
+    pub id: cynic::Id,
+    pub name: String,
+    #[cynic(rename = "slugId")]
+    pub slug_id: String,
+}
+
+/// Project milestone information.
+#[derive(Debug, Clone, Serialize, QueryFragment)]
+#[cynic(graphql_type = "ProjectMilestone", schema = "linear")]
+pub struct ProjectMilestoneNode {
+    pub id: cynic::Id,
+    pub name: String,
+    pub description: Option<String>,
+    pub status: ProjectMilestoneStatus,
+    pub progress: f64,
+    #[cynic(rename = "sortOrder")]
+    pub sort_order: f64,
+    #[cynic(rename = "targetDate")]
+    pub target_date: Option<TimelessDate>,
+    pub project: ProjectMilestoneProject,
+    #[cynic(rename = "createdAt")]
+    pub created_at: DateTime,
+    #[cynic(rename = "updatedAt")]
+    pub updated_at: DateTime,
+    #[cynic(rename = "archivedAt")]
+    pub archived_at: Option<DateTime>,
+}
+
+#[derive(Debug, Clone, QueryFragment)]
+#[cynic(graphql_type = "ProjectMilestoneConnection", schema = "linear")]
+pub struct ProjectMilestoneConnection {
+    pub nodes: Vec<ProjectMilestoneNode>,
+}
+
+#[derive(cynic::InputObject, Debug, Clone)]
+#[cynic(schema = "linear", graphql_type = "NullableStringComparator")]
+pub struct NullableStringComparatorInput {
+    #[cynic(skip_serializing_if = "Option::is_none")]
+    pub eq: Option<String>,
+}
+
+#[derive(cynic::InputObject, Debug, Clone)]
+#[cynic(schema = "linear", graphql_type = "ProjectMilestoneFilter")]
+pub struct ProjectMilestoneFilterInput {
+    #[cynic(skip_serializing_if = "Option::is_none")]
+    pub name: Option<NullableStringComparatorInput>,
+}
+
+#[derive(cynic::QueryVariables, Debug)]
+pub struct ProjectMilestoneQueryVariables {
+    pub id: String,
+}
+
+#[derive(Debug, QueryFragment)]
+#[cynic(
+    graphql_type = "Query",
+    schema = "linear",
+    variables = "ProjectMilestoneQueryVariables"
+)]
+pub struct ProjectMilestoneQuery {
+    #[arguments(id: $id)]
+    #[cynic(rename = "projectMilestone")]
+    pub project_milestone: ProjectMilestoneNode,
+}
+
+#[derive(cynic::QueryVariables, Debug)]
+pub struct ProjectMilestonesQueryVariables {
+    pub first: Option<i32>,
+    pub name: Option<String>,
+}
+
+#[derive(Debug, QueryFragment)]
+#[cynic(
+    graphql_type = "Query",
+    schema = "linear",
+    variables = "ProjectMilestonesQueryVariables"
+)]
+pub struct ProjectMilestonesQuery {
+    #[arguments(first: $first, filter: { name: { eq: $name } })]
+    #[cynic(rename = "projectMilestones")]
+    pub project_milestones: ProjectMilestoneConnection,
+}
+
+#[derive(cynic::QueryVariables, Debug)]
+pub struct ProjectMilestonesForProjectQueryVariables {
+    pub id: String,
+    pub first: Option<i32>,
+    pub name: Option<String>,
+}
+
+#[derive(Debug, QueryFragment)]
+#[cynic(
+    graphql_type = "Query",
+    schema = "linear",
+    variables = "ProjectMilestonesForProjectQueryVariables"
+)]
+pub struct ProjectMilestonesForProjectQuery {
+    #[arguments(id: $id)]
+    pub project: ProjectWithMilestones,
+}
+
+#[derive(Debug, QueryFragment)]
+#[cynic(
+    graphql_type = "Project",
+    schema = "linear",
+    variables = "ProjectMilestonesForProjectQueryVariables"
+)]
+pub struct ProjectWithMilestones {
+    #[arguments(first: $first, filter: { name: { eq: $name } })]
+    #[cynic(rename = "projectMilestones")]
+    pub project_milestones: ProjectMilestoneConnection,
+}
+
+#[derive(cynic::InputObject, Debug, Clone)]
+#[cynic(schema = "linear", graphql_type = "ProjectMilestoneCreateInput")]
+pub struct ProjectMilestoneCreateInput {
+    #[cynic(rename = "projectId")]
+    pub project_id: String,
+    pub name: String,
+    #[cynic(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    #[cynic(rename = "targetDate", skip_serializing_if = "Option::is_none")]
+    pub target_date: Option<TimelessDate>,
+}
+
+#[derive(cynic::InputObject, Debug, Clone)]
+#[cynic(schema = "linear", graphql_type = "ProjectMilestoneUpdateInput")]
+pub struct ProjectMilestoneUpdateInput {
+    #[cynic(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+    #[cynic(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    #[cynic(rename = "projectId", skip_serializing_if = "Option::is_none")]
+    pub project_id: Option<String>,
+    #[cynic(rename = "targetDate", skip_serializing_if = "Option::is_none")]
+    pub target_date: Option<TimelessDate>,
+}
+
+#[derive(cynic::QueryVariables, Debug)]
+pub struct ProjectMilestoneCreateMutationVariables {
+    pub input: ProjectMilestoneCreateInput,
+}
+
+#[derive(cynic::QueryVariables, Debug)]
+pub struct ProjectMilestoneUpdateMutationVariables {
+    pub id: String,
+    pub input: ProjectMilestoneUpdateInput,
+}
+
+#[derive(cynic::QueryVariables, Debug)]
+pub struct ProjectMilestoneDeleteMutationVariables {
+    pub id: String,
+}
+
+#[derive(Debug, QueryFragment)]
+#[cynic(graphql_type = "ProjectMilestonePayload", schema = "linear")]
+pub struct ProjectMilestonePayload {
+    #[cynic(rename = "projectMilestone")]
+    pub project_milestone: ProjectMilestoneNode,
+    pub success: bool,
+}
+
+#[derive(Debug, QueryFragment)]
+#[cynic(
+    graphql_type = "Mutation",
+    schema = "linear",
+    variables = "ProjectMilestoneCreateMutationVariables"
+)]
+pub struct ProjectMilestoneCreateMutation {
+    #[arguments(input: $input)]
+    #[cynic(rename = "projectMilestoneCreate")]
+    pub project_milestone_create: ProjectMilestonePayload,
+}
+
+#[derive(Debug, QueryFragment)]
+#[cynic(
+    graphql_type = "Mutation",
+    schema = "linear",
+    variables = "ProjectMilestoneUpdateMutationVariables"
+)]
+pub struct ProjectMilestoneUpdateMutation {
+    #[arguments(id: $id, input: $input)]
+    #[cynic(rename = "projectMilestoneUpdate")]
+    pub project_milestone_update: ProjectMilestonePayload,
+}
+
+#[derive(Debug, QueryFragment)]
+#[cynic(
+    graphql_type = "Mutation",
+    schema = "linear",
+    variables = "ProjectMilestoneDeleteMutationVariables"
+)]
+pub struct ProjectMilestoneDeleteMutation {
+    #[arguments(id: $id)]
+    #[cynic(rename = "projectMilestoneDelete")]
+    pub project_milestone_delete: DeletePayload,
+}
+
 /// Cycle team information
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, QueryFragment)]
 #[cynic(graphql_type = "Team", schema = "linear")]

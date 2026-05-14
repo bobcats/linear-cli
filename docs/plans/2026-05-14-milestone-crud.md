@@ -342,7 +342,7 @@ git commit -m "feat(milestone): add milestone output types"
 - Modify: `crates/linear-queries/src/lib.rs`
 - Create: `tests/milestone_mutation_tests.rs`
 
-- [ ] **Step 1: Write failing GraphQL serialization tests**
+- [x] **Step 1: Write failing GraphQL serialization tests**
 
 Create `tests/milestone_mutation_tests.rs` covering create/update/delete and list variables:
 
@@ -418,7 +418,7 @@ fn project_milestones_query_serializes_limit() {
 }
 ```
 
-- [ ] **Step 2: Run RED command**
+- [x] **Step 2: Run RED command**
 
 Run:
 
@@ -428,7 +428,7 @@ cargo test --test milestone_mutation_tests -- --nocapture
 
 Expected: FAIL because milestone query types are missing.
 
-- [ ] **Step 3: Add milestone query types**
+- [x] **Step 3: Add milestone query types**
 
 In `crates/linear-queries/src/lib.rs`, near project types, add:
 
@@ -447,7 +447,7 @@ Important details:
 - Add `#[cynic(skip_serializing_if = "Option::is_none")]` to optional input fields that should be omitted.
 - Reuse existing `DeletePayload` for delete.
 
-- [ ] **Step 4: Add conversion from query node to domain type**
+- [x] **Step 4: Add conversion from query node to domain type**
 
 In `src/milestones/types.rs`, add `impl From<crate::client::queries::ProjectMilestoneNode> for Milestone` converting:
 
@@ -456,7 +456,7 @@ In `src/milestones/types.rs`, add `impl From<crate::client::queries::ProjectMile
 - `archived_at.map(|d| d.0)`
 - status enum to lowercase string.
 
-- [ ] **Step 5: Run GREEN command**
+- [x] **Step 5: Run GREEN command**
 
 Run:
 
@@ -467,7 +467,7 @@ cargo test --test milestone_formatting_tests -- --nocapture
 
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add crates/linear-queries/src/lib.rs src/milestones/types.rs tests/milestone_mutation_tests.rs

@@ -175,6 +175,36 @@ impl Formattable for Milestone {
     }
 }
 
+impl From<crate::client::queries::ProjectMilestoneNode> for Milestone {
+    fn from(node: crate::client::queries::ProjectMilestoneNode) -> Self {
+        let status = match node.status {
+            crate::client::queries::ProjectMilestoneStatus::Done => "done",
+            crate::client::queries::ProjectMilestoneStatus::Next => "next",
+            crate::client::queries::ProjectMilestoneStatus::Overdue => "overdue",
+            crate::client::queries::ProjectMilestoneStatus::Unstarted => "unstarted",
+        }
+        .to_string();
+
+        Milestone {
+            id: node.id.inner().to_string(),
+            name: node.name,
+            description: node.description,
+            status,
+            progress: node.progress,
+            sort_order: node.sort_order,
+            target_date: node.target_date.map(|date| date.0),
+            project: MilestoneProject {
+                id: node.project.id.inner().to_string(),
+                name: node.project.name,
+                slug_id: node.project.slug_id,
+            },
+            created_at: node.created_at.0,
+            updated_at: node.updated_at.0,
+            archived_at: node.archived_at.map(|date| date.0),
+        }
+    }
+}
+
 impl Formattable for MilestoneList {
     fn to_json(&self) -> Result<String, CliError> {
         generic_json_list_formatter(&self.0)
