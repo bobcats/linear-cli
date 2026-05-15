@@ -242,6 +242,8 @@ pub struct IssueCreateInput {
     pub priority: Option<i32>,
     #[cynic(rename = "parentId", skip_serializing_if = "Option::is_none")]
     pub parent_id: Option<String>,
+    #[cynic(rename = "projectMilestoneId", skip_serializing_if = "Option::is_none")]
+    pub project_milestone_id: Option<String>,
 }
 
 /// Issue create mutation variables

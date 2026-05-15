@@ -15,6 +15,7 @@ fn test_issue_create_mutation_serializes_required_fields() {
             state_id: None,
             priority: None,
             parent_id: None,
+            project_milestone_id: None,
         },
     });
 
@@ -37,6 +38,7 @@ fn test_issue_create_mutation_omits_unset_optional_fields() {
             state_id: None,
             priority: Some(2),
             parent_id: None,
+            project_milestone_id: None,
         },
     });
 
@@ -57,4 +59,25 @@ fn test_issue_create_mutation_omits_unset_optional_fields() {
     );
     assert_eq!(input["projectId"], "project-456");
     assert_eq!(input["priority"], 2);
+}
+
+#[test]
+fn test_issue_create_mutation_serializes_project_milestone_id() {
+    let operation = IssueCreateMutation::build(IssueCreateMutationVariables {
+        input: IssueCreateInput {
+            team_id: "team-123".to_string(),
+            title: Some("Ship beta".to_string()),
+            description: None,
+            assignee_id: None,
+            project_id: Some("project-1".to_string()),
+            state_id: None,
+            priority: None,
+            parent_id: None,
+            project_milestone_id: Some("milestone-1".to_string()),
+        },
+    });
+    let json = serde_json::to_value(&operation).unwrap();
+    let input = &json["variables"]["input"];
+
+    assert_eq!(input["projectMilestoneId"], "milestone-1");
 }

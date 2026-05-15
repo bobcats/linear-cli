@@ -7,6 +7,10 @@ use crate::io::Io;
 use crate::issues::resolver::{
     IssueReferenceLookup, IssueReferenceResolver, ResolveIssueRefsInput,
 };
+use crate::milestones::resolver::{
+    MilestoneReferenceLookup, MilestoneReferenceResolver, ResolveMilestoneInput,
+    ResolvedMilestonePatch,
+};
 use crate::output::{
     JsonStyle, OutputFormat, format_output, get_format_with_provider,
     resolve_json_style_with_provider,
@@ -23,8 +27,10 @@ pub fn handle_create(
     state: Option<String>,
     parent: Option<String>,
     priority: Option<i32>,
+    milestone: Option<String>,
     client: &dyn IssueClient,
     lookup: &dyn IssueReferenceLookup,
+    milestone_lookup: &dyn MilestoneReferenceLookup,
     config: &dyn ConfigProvider,
     storage: &dyn TokenStorage,
     io: &dyn Io,
@@ -33,6 +39,7 @@ pub fn handle_create(
     let token = get_token_with_provider(config, storage)?;
 
     let resolver = IssueReferenceResolver::new(lookup);
+    let raw_project_ref = project.clone();
     let resolved = resolver.resolve(
         token.expose_secret(),
         &ResolveIssueRefsInput {
@@ -43,6 +50,27 @@ pub fn handle_create(
             parent,
         },
     )?;
+
+    let milestone_scope = if let Some(project_id) = &resolved.project_id {
+        Some(project_id.clone())
+    } else if let Some(raw_project_ref) = raw_project_ref {
+        milestone_lookup.resolve_project_id_by_slug(token.expose_secret(), &raw_project_ref)?
+    } else {
+        None
+    };
+    let milestone_patch = MilestoneReferenceResolver::new(milestone_lookup).resolve_patch(
+        token.expose_secret(),
+        ResolveMilestoneInput {
+            reference: milestone,
+            project: milestone_scope,
+            allow_null_clear: false,
+        },
+    )?;
+    let project_milestone_id = match milestone_patch {
+        ResolvedMilestonePatch::Unchanged => None,
+        ResolvedMilestonePatch::Set(id) => Some(id),
+        ResolvedMilestonePatch::Clear => unreachable!("clear is disabled for issue create"),
+    };
 
     let created = client.create_issue(
         token.expose_secret(),
@@ -55,6 +83,7 @@ pub fn handle_create(
             state_id: resolved.state_id,
             priority,
             parent_id: resolved.parent_id,
+            project_milestone_id,
         },
     )?;
 

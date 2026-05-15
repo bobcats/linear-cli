@@ -202,7 +202,7 @@ fn main() {
                     state,
                     parent,
                     priority,
-                    milestone: _,
+                    milestone,
                     format,
                 } => resolve_inline_or_file(description, description_file, "description").and_then(
                     |description| {
@@ -215,8 +215,10 @@ fn main() {
                             state,
                             parent,
                             priority.map(i32::from),
+                            milestone,
                             &client as &dyn IssueClient,
                             &client as &dyn IssueReferenceLookup,
+                            &client as &dyn MilestoneReferenceLookup,
                             &config,
                             &storage,
                             &io,

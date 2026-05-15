@@ -27,6 +27,8 @@ use linear_cli::issues::commands::{
 };
 use linear_cli::issues::resolver::IssueReferenceLookup;
 use linear_cli::issues::types::{Issue, IssueState, Priority, User};
+use linear_cli::milestones::resolver::MilestoneReferenceLookup;
+use linear_cli::milestones::types::{Milestone, MilestoneProject};
 use linear_cli::output::OutputFormat;
 use linear_cli::projects::commands::{
     handle_list as handle_project_list, handle_view as handle_project_view,
@@ -50,6 +52,61 @@ impl Io for NoopIo {
 }
 
 struct PassthroughLookup;
+
+impl MilestoneReferenceLookup for PassthroughLookup {
+    fn get_milestone_by_id(&self, _token: &str, id: &str) -> Result<Option<Milestone>, CliError> {
+        Ok(Some(Milestone {
+            id: id.to_string(),
+            name: "Milestone".to_string(),
+            description: None,
+            status: "next".to_string(),
+            progress: 0.0,
+            sort_order: 0.0,
+            target_date: None,
+            project: MilestoneProject {
+                id: "project-1".to_string(),
+                name: "Project".to_string(),
+                slug_id: "project".to_string(),
+            },
+            created_at: "2026-01-01T00:00:00Z".to_string(),
+            updated_at: "2026-01-01T00:00:00Z".to_string(),
+            archived_at: None,
+        }))
+    }
+
+    fn find_milestones_by_name(
+        &self,
+        _token: &str,
+        name: &str,
+        _project_id: Option<&str>,
+    ) -> Result<Vec<Milestone>, CliError> {
+        Ok(vec![Milestone {
+            id: "milestone-1".to_string(),
+            name: name.to_string(),
+            description: None,
+            status: "next".to_string(),
+            progress: 0.0,
+            sort_order: 0.0,
+            target_date: None,
+            project: MilestoneProject {
+                id: "project-1".to_string(),
+                name: "Project".to_string(),
+                slug_id: "project".to_string(),
+            },
+            created_at: "2026-01-01T00:00:00Z".to_string(),
+            updated_at: "2026-01-01T00:00:00Z".to_string(),
+            archived_at: None,
+        }])
+    }
+
+    fn resolve_project_id_by_slug(
+        &self,
+        _token: &str,
+        _slug: &str,
+    ) -> Result<Option<String>, CliError> {
+        Ok(Some("project-1".to_string()))
+    }
+}
 
 impl IssueReferenceLookup for PassthroughLookup {
     fn resolve_viewer_id(&self, _token: &str) -> Result<String, CliError> {
@@ -247,6 +304,7 @@ fn sample_issue() -> Issue {
             email: "creator@example.com".to_string(),
         },
         project: None,
+        milestone: None,
         created_at: "2026-02-24T00:00:00Z".to_string(),
         updated_at: "2026-02-24T00:00:00Z".to_string(),
         url: "https://linear.app/company/issue/ENG-123".to_string(),
@@ -355,7 +413,9 @@ fn bench_issue_handler_paths(c: &mut Criterion) {
                     Some("state-1".to_string()),
                     None,
                     Some(2),
+                    None,
                     &issue_client,
+                    &lookup,
                     &lookup,
                     &config,
                     &storage,
@@ -507,7 +567,9 @@ fn bench_issue_handler_paths(c: &mut Criterion) {
                     None,
                     None,
                     Some(2),
+                    None,
                     &issue_client,
+                    &lookup,
                     &lookup,
                     &config,
                     &storage,
@@ -531,7 +593,9 @@ fn bench_issue_handler_paths(c: &mut Criterion) {
                     None,
                     None,
                     Some(2),
+                    None,
                     &issue_client,
+                    &lookup,
                     &lookup,
                     &config,
                     &storage,

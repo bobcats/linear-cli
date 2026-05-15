@@ -815,7 +815,7 @@ git commit -m "feat(issue): show milestone in issue output"
 - Modify: `tests/issue_create_mutation_tests.rs`
 - Modify: `benches/command_paths.rs`
 
-- [ ] **Step 1: Write failing create mutation test**
+- [x] **Step 1: Write failing create mutation test**
 
 In `tests/issue_create_mutation_tests.rs`, add:
 
@@ -844,7 +844,7 @@ fn test_issue_create_mutation_serializes_project_milestone_id() {
 
 Update existing `IssueCreateInput` literals in this file with `project_milestone_id: None`.
 
-- [ ] **Step 2: Run RED command**
+- [x] **Step 2: Run RED command**
 
 Run:
 
@@ -854,7 +854,7 @@ cargo test --test issue_create_mutation_tests test_issue_create_mutation_seriali
 
 Expected: FAIL because `project_milestone_id` is missing.
 
-- [ ] **Step 3: Add create mutation field**
+- [x] **Step 3: Add create mutation field**
 
 In `crates/linear-queries/src/lib.rs`, add to `IssueCreateInput`:
 
@@ -865,7 +865,7 @@ pub project_milestone_id: Option<String>,
 
 In `src/client/issues.rs`, add `project_milestone_id: Option<String>` to public `CreateIssueInput` and pass it through to the query input.
 
-- [ ] **Step 4: Run mutation GREEN command**
+- [x] **Step 4: Run mutation GREEN command**
 
 Run:
 
@@ -875,7 +875,7 @@ cargo test --test issue_create_mutation_tests -- --nocapture
 
 Expected: PASS.
 
-- [ ] **Step 5: Write failing create handler test**
+- [x] **Step 5: Write failing create handler test**
 
 In `tests/issue_create_command_tests.rs`, add a mock that records `CreateIssueInput`, and assert:
 
@@ -883,7 +883,7 @@ In `tests/issue_create_command_tests.rs`, add a mock that records `CreateIssueIn
 - milestone lookup is scoped to the resolved project;
 - client receives `project_milestone_id: Some("milestone-1")`.
 
-- [ ] **Step 6: Run RED command**
+- [x] **Step 6: Run RED command**
 
 Run:
 
@@ -893,7 +893,7 @@ cargo test --test issue_create_command_tests milestone -- --nocapture
 
 Expected: FAIL because handler signature/logic does not resolve milestone.
 
-- [ ] **Step 7: Update create resolution flow**
+- [x] **Step 7: Update create resolution flow**
 
 In `src/issues/resolver.rs`:
 
@@ -917,7 +917,7 @@ In `src/main.rs`, pass `milestone` from CLI and `&client as &dyn MilestoneRefere
 
 Update `benches/command_paths.rs` and all handler test call sites for the new parameter.
 
-- [ ] **Step 8: Run GREEN command**
+- [x] **Step 8: Run GREEN command**
 
 Run:
 
@@ -928,7 +928,7 @@ cargo check
 
 Expected: PASS.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add crates/linear-queries/src/lib.rs src/client/issues.rs src/issues/commands/create.rs src/issues/resolver.rs src/main.rs tests/issue_create_* benches/command_paths.rs

@@ -23,6 +23,7 @@ pub struct CreateIssueInput {
     pub state_id: Option<String>,
     pub priority: Option<i32>,
     pub parent_id: Option<String>,
+    pub project_milestone_id: Option<String>,
 }
 
 /// Update issue request payload used by the issue client.
@@ -246,6 +247,7 @@ impl IssueClient for LinearClient {
                 state_id: input.state_id,
                 priority: input.priority,
                 parent_id: input.parent_id,
+                project_milestone_id: input.project_milestone_id,
             },
         });
 

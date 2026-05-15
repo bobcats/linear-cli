@@ -24,6 +24,7 @@ fn issue_create_vars() -> IssueCreateMutationVariables {
             state_id: Some("state-1".to_string()),
             priority: Some(2),
             parent_id: None,
+            project_milestone_id: None,
         },
     }
 }

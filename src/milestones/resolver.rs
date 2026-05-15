@@ -90,7 +90,7 @@ impl<'a> MilestoneReferenceResolver<'a> {
             Some(project) => Some(
                 self.lookup
                     .resolve_project_id_by_slug(token, &project)?
-                    .ok_or_else(|| CliError::NotFound(format!("project not found for slug: {project}")))?,
+                    .unwrap_or(project),
             ),
             None => None,
         };

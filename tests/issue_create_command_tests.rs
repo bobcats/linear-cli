@@ -7,6 +7,8 @@ use linear_cli::io::Io;
 use linear_cli::issues::commands::create::handle_create;
 use linear_cli::issues::resolver::IssueReferenceLookup;
 use linear_cli::issues::types::{Issue, IssueState, Priority, User};
+use linear_cli::milestones::resolver::MilestoneReferenceLookup;
+use linear_cli::milestones::types::{Milestone, MilestoneProject};
 use linear_cli::output::OutputFormat;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
@@ -97,6 +99,52 @@ impl IssueClient for MockCreateIssueClient {
 }
 
 struct PassthroughLookup;
+
+impl MilestoneReferenceLookup for PassthroughLookup {
+    fn get_milestone_by_id(&self, _token: &str, id: &str) -> Result<Option<Milestone>, CliError> {
+        Ok(Some(Milestone {
+            id: id.to_string(),
+            name: "Beta".to_string(),
+            description: None,
+            status: "next".to_string(),
+            progress: 0.0,
+            sort_order: 0.0,
+            target_date: None,
+            project: MilestoneProject {
+                id: "project-from-slug".to_string(),
+                name: "App".to_string(),
+                slug_id: "app".to_string(),
+            },
+            created_at: "2026-01-01T00:00:00Z".to_string(),
+            updated_at: "2026-01-01T00:00:00Z".to_string(),
+            archived_at: None,
+        }))
+    }
+
+    fn find_milestones_by_name(&self, _token: &str, name: &str, project_id: Option<&str>) -> Result<Vec<Milestone>, CliError> {
+        Ok(vec![Milestone {
+            id: "milestone-from-name".to_string(),
+            name: name.to_string(),
+            description: None,
+            status: "next".to_string(),
+            progress: 0.0,
+            sort_order: 0.0,
+            target_date: None,
+            project: MilestoneProject {
+                id: project_id.unwrap_or("project-from-slug").to_string(),
+                name: "App".to_string(),
+                slug_id: "app".to_string(),
+            },
+            created_at: "2026-01-01T00:00:00Z".to_string(),
+            updated_at: "2026-01-01T00:00:00Z".to_string(),
+            archived_at: None,
+        }])
+    }
+
+    fn resolve_project_id_by_slug(&self, _token: &str, slug: &str) -> Result<Option<String>, CliError> {
+        Ok(Some(if slug == "APP" { "project-from-slug" } else { slug }.to_string()))
+    }
+}
 
 impl IssueReferenceLookup for PassthroughLookup {
     fn resolve_viewer_id(&self, _token: &str) -> Result<String, CliError> {
@@ -194,7 +242,9 @@ fn test_create_outputs_full_issue_object_on_success() {
         None,
         None,
         Some(2),
+        None,
         &client,
+        &PassthroughLookup,
         &PassthroughLookup,
         &config,
         &storage,
@@ -228,7 +278,9 @@ fn test_create_returns_auth_error_when_no_token() {
         None,
         None,
         None,
+        None,
         &client,
+        &PassthroughLookup,
         &PassthroughLookup,
         &config,
         &storage,
@@ -266,7 +318,9 @@ fn test_create_propagates_not_found_for_unresolved_reference() {
         None,
         None,
         None,
+        None,
         &client,
+        &PassthroughLookup,
         &PassthroughLookup,
         &config,
         &storage,
@@ -303,7 +357,9 @@ fn test_create_uses_config_provider_json_style_override() {
         None,
         None,
         Some(2),
+        None,
         &client,
+        &PassthroughLookup,
         &PassthroughLookup,
         &config,
         &storage,
@@ -341,7 +397,9 @@ fn test_create_with_parent_passes_through_to_client() {
         None,
         Some("ENG-100".to_string()),
         None,
+        None,
         &client,
+        &PassthroughLookup,
         &PassthroughLookup,
         &config,
         &storage,
@@ -404,7 +462,9 @@ fn test_create_resolves_at_me_to_viewer_uuid_before_sending_to_client() {
         None,
         None,
         None,
+        None,
         &client,
+        &PassthroughLookup,
         &PassthroughLookup,
         &config,
         &storage,
@@ -422,4 +482,60 @@ fn test_create_resolves_at_me_to_viewer_uuid_before_sending_to_client() {
         Some("viewer-123"),
         "@me should be resolved to viewer UUID, not passed as raw string"
     );
+}
+
+#[test]
+fn test_create_with_project_scopes_milestone_resolution() {
+    let mut values = HashMap::new();
+    values.insert("LINEAR_TOKEN".to_string(), "test_token".to_string());
+
+    let config = TestConfigProvider { values };
+    let storage = MockStorage { token: None };
+    let io = CapturingIo::new();
+    let captured_input: Arc<Mutex<Option<CreateIssueInput>>> = Arc::new(Mutex::new(None));
+    let captured = captured_input.clone();
+
+    struct CapturingClient { captured: Arc<Mutex<Option<CreateIssueInput>>> }
+    impl IssueClient for CapturingClient {
+        fn get_issue(&self, _token: &str, _id: &str) -> Result<Issue, CliError> { unreachable!() }
+        fn list_issues(&self, _token: &str, _assignee: Option<String>, _project: Option<String>, _limit: usize) -> Result<Vec<Issue>, CliError> { unreachable!() }
+        fn create_issue(&self, _token: &str, input: CreateIssueInput) -> Result<Issue, CliError> {
+            *self.captured.lock().unwrap() = Some(input);
+            Ok(sample_issue())
+        }
+    }
+
+    struct Lookup { scoped_project: Arc<Mutex<Option<String>>> }
+    impl IssueReferenceLookup for Lookup {
+        fn resolve_viewer_id(&self, _token: &str) -> Result<String, CliError> { Ok("viewer-123".to_string()) }
+        fn resolve_user_id_by_email(&self, _token: &str, _email: &str) -> Result<Option<String>, CliError> { Ok(Some("user-from-email".to_string())) }
+        fn resolve_team_id_by_key(&self, _token: &str, _key: &str) -> Result<Option<String>, CliError> { Ok(Some("team-from-key".to_string())) }
+        fn resolve_project_id_by_slug(&self, _token: &str, slug: &str) -> Result<Option<String>, CliError> { Ok((slug == "APP").then(|| "project-from-slug".to_string())) }
+        fn resolve_state_id_by_name(&self, _token: &str, _name: &str) -> Result<Option<String>, CliError> { Ok(Some("state-from-name".to_string())) }
+        fn resolve_issue_id_by_identifier(&self, _token: &str, _identifier: &str) -> Result<Option<String>, CliError> { Ok(Some("issue-from-identifier".to_string())) }
+    }
+    impl MilestoneReferenceLookup for Lookup {
+        fn get_milestone_by_id(&self, _token: &str, _id: &str) -> Result<Option<Milestone>, CliError> { Ok(None) }
+        fn find_milestones_by_name(&self, _token: &str, name: &str, project_id: Option<&str>) -> Result<Vec<Milestone>, CliError> {
+            *self.scoped_project.lock().unwrap() = project_id.map(str::to_string);
+            Ok(vec![Milestone { id: "milestone-1".to_string(), name: name.to_string(), description: None, status: "next".to_string(), progress: 0.0, sort_order: 0.0, target_date: None, project: MilestoneProject { id: "project-from-slug".to_string(), name: "App".to_string(), slug_id: "app".to_string() }, created_at: "2026-01-01T00:00:00Z".to_string(), updated_at: "2026-01-01T00:00:00Z".to_string(), archived_at: None }])
+        }
+        fn resolve_project_id_by_slug(&self, _token: &str, slug: &str) -> Result<Option<String>, CliError> { Ok((slug == "APP").then(|| "project-from-slug".to_string())) }
+    }
+
+    let scoped_project = Arc::new(Mutex::new(None));
+    let lookup = Lookup { scoped_project: scoped_project.clone() };
+    let client = CapturingClient { captured };
+
+    let result = handle_create(
+        "ENG", "Ship beta", None, None, Some("APP".to_string()), None, None, Some(2), Some("Beta".to_string()),
+        &client, &lookup, &lookup, &config, &storage, &io, None,
+    );
+
+    assert!(result.is_ok());
+    assert_eq!(*scoped_project.lock().unwrap(), Some("project-from-slug".to_string()));
+    let input = captured_input.lock().unwrap();
+    let input = input.as_ref().expect("create_issue should have been called");
+    assert_eq!(input.project_id.as_deref(), Some("project-from-slug"));
+    assert_eq!(input.project_milestone_id.as_deref(), Some("milestone-1"));
 }

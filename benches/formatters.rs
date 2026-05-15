@@ -57,6 +57,7 @@ fn create_test_issue(id: usize) -> Issue {
             email: format!("creator{}@example.com", id % 5),
         },
         project: None,
+        milestone: None,
         created_at: "2025-11-01T10:00:00Z".to_string(),
         updated_at: "2025-11-13T14:30:00Z".to_string(),
         url: format!("https://linear.app/team/issue/ENG-{}", id),
