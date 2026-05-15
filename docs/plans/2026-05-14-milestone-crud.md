@@ -577,7 +577,7 @@ git commit -m "feat(milestone): add client and handlers"
 - Create: `tests/milestone_resolver_tests.rs`
 - Modify: `src/client/reference_lookup.rs`
 
-- [ ] **Step 1: Write failing resolver tests**
+- [x] **Step 1: Write failing resolver tests**
 
 Create `tests/milestone_resolver_tests.rs` with a mock lookup and tests for:
 
@@ -601,7 +601,7 @@ pub enum ResolvedMilestoneRef {
 }
 ```
 
-- [ ] **Step 2: Run RED command**
+- [x] **Step 2: Run RED command**
 
 Run:
 
@@ -611,7 +611,7 @@ cargo test --test milestone_resolver_tests -- --nocapture
 
 Expected: FAIL because resolver does not exist.
 
-- [ ] **Step 3: Implement resolver interfaces**
+- [x] **Step 3: Implement resolver interfaces**
 
 In `src/milestones/resolver.rs`, add:
 
@@ -627,7 +627,7 @@ In `src/milestones/resolver.rs`, add:
 
 Keep UUID detection local or move to a shared helper only if it avoids duplication without broad refactoring.
 
-- [ ] **Step 4: Implement production lookup**
+- [x] **Step 4: Implement production lookup**
 
 In `src/client/reference_lookup.rs`, implement `MilestoneReferenceLookup for LinearClient` using `MilestoneClient` methods:
 
@@ -635,7 +635,7 @@ In `src/client/reference_lookup.rs`, implement `MilestoneReferenceLookup for Lin
 - Name: `list_milestones(token, project_id, Some(name), 250)`.
 - Project slug: existing `list_projects` lookup by `slug_id`.
 
-- [ ] **Step 5: Run GREEN command**
+- [x] **Step 5: Run GREEN command**
 
 Run:
 
@@ -645,7 +645,7 @@ cargo test --test milestone_resolver_tests -- --nocapture
 
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/milestones/resolver.rs src/milestones/mod.rs src/client/reference_lookup.rs tests/milestone_resolver_tests.rs
