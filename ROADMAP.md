@@ -6,7 +6,9 @@
 
 - Authentication (`auth login|status|logout|token`)
 - Issues: view/list/create/update/delete, comments, lifecycle actions, relations
+- Issue milestone assignment on create/update
 - Projects: list/view
+- Project milestones: list/view/create/update/delete
 - Teams: list/view
 - Cycles: list/view/current
 - Labels and users: list

@@ -1069,7 +1069,7 @@ git commit -m "feat(issue): update issue milestones"
 - Modify: `tests/cli_structure_tests.rs`
 - Modify: any remaining compile-failing tests from changed structs/signatures
 
-- [ ] **Step 1: Write failing README/status expectation if existing docs tests exist**
+- [x] **Step 1: Write failing README/status expectation if existing docs tests exist**
 
 Search for docs tests:
 
@@ -1085,7 +1085,7 @@ rg -n "milestone" README.md ROADMAP.md
 
 Expected: no milestone mentions before docs update.
 
-- [ ] **Step 2: Update README examples**
+- [x] **Step 2: Update README examples**
 
 In `README.md`:
 
@@ -1100,7 +1100,7 @@ linear-cli issue update ENG-123 --milestone "Beta"
 
 In `ROADMAP.md`, update current state to include milestone CRUD if the feature is complete.
 
-- [ ] **Step 3: Run docs/check command**
+- [x] **Step 3: Run docs/check command**
 
 Run:
 
@@ -1110,7 +1110,7 @@ rg -n "milestone" README.md ROADMAP.md
 
 Expected: output includes the new examples/status lines.
 
-- [ ] **Step 4: Run focused compile/test sweep**
+- [x] **Step 4: Run focused compile/test sweep**
 
 Run:
 
@@ -1129,7 +1129,7 @@ cargo test --test issue_formatting_tests -- --nocapture
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add README.md ROADMAP.md tests src crates benches

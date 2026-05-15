@@ -12,7 +12,7 @@ A fast, automation-friendly CLI for Linear issue tracking.
 
 - LLM/script-friendly output (JSON by default in non-TTY contexts)
 - Read + core write workflows for issues
-- Projects, teams, cycles, labels, users, and search commands
+- Projects, project milestones, teams, cycles, labels, users, and search commands
 - Multiple output formats: JSON, CSV, Markdown, table
 - Secure token storage in system keyring (with env-var override)
 
@@ -21,6 +21,7 @@ A fast, automation-friendly CLI for Linear issue tracking.
 Current release line includes:
 - Authentication (`auth login|status|logout|token`)
 - Issue read and write operations (create/update/comment/lifecycle/relation/delete)
+- Project milestone CRUD and issue milestone assignment
 - Project/team/cycle read operations
 - Semantic search
 
@@ -55,12 +56,15 @@ linear-cli issue view ENG-123
 linear-cli issue list --assignee @me --limit 10
 linear-cli issue create --team ENG --title "Fix login bug"
 linear-cli issue update ENG-123 --priority 2 --state "In Progress"
+linear-cli issue update ENG-123 --milestone "Beta"
 linear-cli issue comment add ENG-123 --body "Started investigation"
 linear-cli issue lifecycle archive ENG-123
 linear-cli issue relation link ENG-123 ENG-456
 
 # other resources
 linear-cli project list
+linear-cli milestone list --project APP
+linear-cli milestone create --project APP --name "Beta" --target-date 2026-06-30
 linear-cli team list
 linear-cli cycle current
 
