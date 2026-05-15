@@ -4,6 +4,7 @@ pub mod cycles;
 pub mod graphql;
 pub mod issues;
 pub mod labels;
+pub mod milestones;
 pub mod projects;
 pub mod queries;
 pub mod reference_lookup;

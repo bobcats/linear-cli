@@ -488,7 +488,7 @@ git commit -m "feat(milestone): add GraphQL operations"
 - Modify: `src/milestones/mod.rs`
 - Create: `tests/milestone_command_tests.rs`
 
-- [ ] **Step 1: Write failing handler tests**
+- [x] **Step 1: Write failing handler tests**
 
 Create `tests/milestone_command_tests.rs` with local `TestConfigProvider`, `MockStorage`, and `CapturingIo` copied from project/issue command tests. Add tests for:
 
@@ -512,7 +512,7 @@ struct RecordedCreate {
 
 Assert the recorded create/update input, not only printed output.
 
-- [ ] **Step 2: Run RED command**
+- [x] **Step 2: Run RED command**
 
 Run:
 
@@ -522,7 +522,7 @@ cargo test --test milestone_command_tests -- --nocapture
 
 Expected: FAIL because client and handlers do not exist.
 
-- [ ] **Step 3: Implement `MilestoneClient`**
+- [x] **Step 3: Implement `MilestoneClient`**
 
 Create `src/client/milestones.rs`:
 
@@ -539,7 +539,7 @@ Create `src/client/milestones.rs`:
 
 Add `pub mod milestones;` to `src/client/mod.rs`.
 
-- [ ] **Step 4: Implement handlers**
+- [x] **Step 4: Implement handlers**
 
 Implement handlers mirroring project and issue handler patterns:
 
@@ -551,7 +551,7 @@ Implement handlers mirroring project and issue handler patterns:
 
 At this task stage, handlers can accept already-resolved project/milestone IDs. Name resolution is added in the resolver task.
 
-- [ ] **Step 5: Run GREEN command**
+- [x] **Step 5: Run GREEN command**
 
 Run:
 
@@ -562,7 +562,7 @@ cargo test --test milestone_mutation_tests -- --nocapture
 
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/client/mod.rs src/client/milestones.rs src/milestones tests/milestone_command_tests.rs
