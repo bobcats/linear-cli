@@ -13,6 +13,7 @@ use linear_cli::client::comments::CommentClient;
 use linear_cli::client::cycles::CycleClient;
 use linear_cli::client::issues::IssueClient;
 use linear_cli::client::labels::LabelClient;
+use linear_cli::client::milestones::MilestoneClient;
 use linear_cli::client::projects::ProjectClient;
 use linear_cli::client::search::SearchClient;
 use linear_cli::client::semantic_search::SemanticSearchClient;
@@ -38,6 +39,12 @@ use linear_cli::issues::commands::{
 };
 use linear_cli::issues::resolver::IssueReferenceLookup;
 use linear_cli::labels::commands::list::handle_list as handle_label_list;
+use linear_cli::milestones::commands::{
+    handle_create as handle_milestone_create, handle_delete as handle_milestone_delete,
+    handle_list as handle_milestone_list, handle_update as handle_milestone_update,
+    handle_view as handle_milestone_view,
+};
+use linear_cli::milestones::resolver::MilestoneReferenceLookup;
 use linear_cli::projects::commands::{
     handle_list as handle_project_list, handle_view as handle_project_view,
 };
@@ -481,15 +488,104 @@ fn main() {
                 ),
             }
         }
-        Commands::Milestone { action } => match action {
-            MilestoneCommands::List { .. }
-            | MilestoneCommands::View { .. }
-            | MilestoneCommands::Create { .. }
-            | MilestoneCommands::Update { .. }
-            | MilestoneCommands::Delete { .. } => Err(linear_cli::error::CliError::InvalidArgs(
-                "milestone command handlers are not implemented yet".to_string(),
-            )),
-        },
+        Commands::Milestone { action } => {
+            let storage = match KeyringStorage::new() {
+                Ok(s) => s,
+                Err(e) => {
+                    eprintln!("Error: {}", e);
+                    std::process::exit(e.exit_code());
+                }
+            };
+            let config = EnvConfigProvider;
+            let io = RealIo;
+            let client = LinearClient::new();
+
+            match action {
+                MilestoneCommands::List {
+                project,
+                limit,
+                format,
+            } => handle_milestone_list(
+                project.as_deref(),
+                limit,
+                &client as &dyn MilestoneClient,
+                &client as &dyn MilestoneReferenceLookup,
+                &config,
+                &storage,
+                &io,
+                format.to_format(),
+            ),
+            MilestoneCommands::View {
+                reference,
+                project,
+                format,
+            } => handle_milestone_view(
+                &reference,
+                project.as_deref(),
+                &client as &dyn MilestoneClient,
+                &client as &dyn MilestoneReferenceLookup,
+                &config,
+                &storage,
+                &io,
+                format.to_format(),
+            ),
+            MilestoneCommands::Create {
+                project,
+                name,
+                description,
+                target_date,
+                format,
+            } => handle_milestone_create(
+                &project,
+                &name,
+                description,
+                target_date,
+                &client as &dyn MilestoneClient,
+                &client as &dyn MilestoneReferenceLookup,
+                &config,
+                &storage,
+                &io,
+                format.to_format(),
+            ),
+            MilestoneCommands::Update {
+                reference,
+                project,
+                name,
+                description,
+                target_date,
+                format,
+            } => handle_milestone_update(
+                &reference,
+                project.as_deref(),
+                linear_cli::client::milestones::UpdateMilestoneInput {
+                    name,
+                    description,
+                    project_id: None,
+                    target_date,
+                },
+                &client as &dyn MilestoneClient,
+                &client as &dyn MilestoneReferenceLookup,
+                &config,
+                &storage,
+                &io,
+                format.to_format(),
+            ),
+            MilestoneCommands::Delete {
+                reference,
+                project,
+                format,
+                } => handle_milestone_delete(
+                    &reference,
+                    project.as_deref(),
+                    &client as &dyn MilestoneClient,
+                    &client as &dyn MilestoneReferenceLookup,
+                    &config,
+                    &storage,
+                    &io,
+                    format.to_format(),
+                ),
+            }
+        }
         Commands::Search {
             query,
             r#type,

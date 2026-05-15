@@ -659,7 +659,7 @@ git commit -m "feat(milestone): resolve milestone references"
 - Modify: `src/milestones/commands/*.rs` if handler signatures need lookup/project resolver dependencies
 - Modify: `tests/milestone_command_tests.rs`
 
-- [ ] **Step 1: Add failing handler tests for name resolution paths**
+- [x] **Step 1: Add failing handler tests for name resolution paths**
 
 Extend `tests/milestone_command_tests.rs` so handlers take user-facing refs and resolve them:
 
@@ -668,7 +668,7 @@ Extend `tests/milestone_command_tests.rs` so handlers take user-facing refs and 
 - `handle_create("APP", ...)` resolves project slug before creating.
 - Ambiguous milestone name propagates `InvalidArgs`.
 
-- [ ] **Step 2: Run RED command**
+- [x] **Step 2: Run RED command**
 
 Run:
 
@@ -678,7 +678,7 @@ cargo test --test milestone_command_tests -- --nocapture
 
 Expected: FAIL because handlers either expect raw IDs or do not accept lookup dependencies.
 
-- [ ] **Step 3: Update milestone handlers to use resolver**
+- [x] **Step 3: Update milestone handlers to use resolver**
 
 Adjust handler signatures to accept `&dyn MilestoneReferenceLookup` when they need project/milestone resolution.
 
@@ -690,7 +690,7 @@ Expected behavior:
 - `update`: resolve milestone ref with optional project; resolve new `--project` if supplied; require at least one update field.
 - `delete`: resolve milestone ref with optional project; call `delete_milestone`.
 
-- [ ] **Step 4: Add `main.rs` dispatch**
+- [x] **Step 4: Add `main.rs` dispatch**
 
 In `src/main.rs`:
 
@@ -699,7 +699,7 @@ In `src/main.rs`:
 - Instantiate storage/config/io/client consistently with other resource arms.
 - Pass `&client as &dyn MilestoneClient` and `&client as &dyn MilestoneReferenceLookup`.
 
-- [ ] **Step 5: Run GREEN command**
+- [x] **Step 5: Run GREEN command**
 
 Run:
 
@@ -710,7 +710,7 @@ cargo check
 
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/main.rs src/milestones/commands tests/milestone_command_tests.rs
