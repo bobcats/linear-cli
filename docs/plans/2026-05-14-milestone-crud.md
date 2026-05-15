@@ -946,7 +946,7 @@ git commit -m "feat(issue): assign milestone on create"
 - Modify: `tests/issue_update_command_tests.rs`
 - Modify: `benches/command_paths.rs`
 
-- [ ] **Step 1: Write failing update mutation tests for set, omit, and clear**
+- [x] **Step 1: Write failing update mutation tests for set, omit, and clear**
 
 In `tests/issue_update_mutation_tests.rs`, add tests:
 
@@ -968,7 +968,7 @@ pub enum IssueFieldPatch<T> {
 
 If `IssueUpdateInput` in `crates/linear-queries` cannot derive `cynic::InputObject` with a tri-state field, implement manual `cynic::InputObject` + `cynic::serde::Serialize` for that query input instead of weakening the tri-state requirement.
 
-- [ ] **Step 2: Run RED command**
+- [x] **Step 2: Run RED command**
 
 Run:
 
@@ -978,7 +978,7 @@ cargo test --test issue_update_mutation_tests project_milestone -- --nocapture
 
 Expected: FAIL because update tri-state is missing.
 
-- [ ] **Step 3: Implement tri-state update serialization**
+- [x] **Step 3: Implement tri-state update serialization**
 
 In `src/client/issues.rs`:
 
@@ -997,7 +997,7 @@ In `crates/linear-queries/src/lib.rs`:
 
 Keep all other optional update fields skip-on-none.
 
-- [ ] **Step 4: Run mutation GREEN command**
+- [x] **Step 4: Run mutation GREEN command**
 
 Run:
 
@@ -1007,7 +1007,7 @@ cargo test --test issue_update_mutation_tests -- --nocapture
 
 Expected: PASS.
 
-- [ ] **Step 5: Write failing update handler tests**
+- [x] **Step 5: Write failing update handler tests**
 
 In `tests/issue_update_command_tests.rs`, add tests:
 
@@ -1015,7 +1015,7 @@ In `tests/issue_update_command_tests.rs`, add tests:
 - `--milestone null` sends `IssueFieldPatch::Clear` and satisfies the “at least one patch field” validation.
 - no `--milestone` sends `IssueFieldPatch::Unchanged`.
 
-- [ ] **Step 6: Run RED command**
+- [x] **Step 6: Run RED command**
 
 Run:
 
@@ -1025,7 +1025,7 @@ cargo test --test issue_update_command_tests milestone -- --nocapture
 
 Expected: FAIL because update handler does not accept or resolve milestone.
 
-- [ ] **Step 7: Update handler and dispatch**
+- [x] **Step 7: Update handler and dispatch**
 
 In `src/issues/commands/update.rs`:
 
@@ -1043,7 +1043,7 @@ In `src/main.rs`:
 
 Update `benches/command_paths.rs` and test call sites.
 
-- [ ] **Step 8: Run GREEN command**
+- [x] **Step 8: Run GREEN command**
 
 Run:
 
@@ -1054,7 +1054,7 @@ cargo check
 
 Expected: PASS.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add crates/linear-queries/src/lib.rs src/client/issues.rs src/issues/commands/update.rs src/main.rs tests/issue_update_* benches/command_paths.rs

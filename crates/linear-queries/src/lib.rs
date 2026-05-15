@@ -8,7 +8,7 @@ use cynic::QueryFragment;
 use serde::Serialize;
 
 // Re-export schema and scalar types so downstream crates can use them.
-pub use linear_schema::{DateTime, TimelessDate, schema};
+pub use linear_schema::{schema, DateTime, TimelessDate};
 
 /// User information for authentication
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, QueryFragment)]
@@ -272,6 +272,43 @@ pub struct IssueCreateMutation {
     pub issue_create: IssuePayload,
 }
 
+/// Nullable issue update field patch that can be omitted, set, or cleared.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub enum NullableIssueUpdateField<T> {
+    #[default]
+    Unchanged,
+    Set(T),
+    Clear,
+}
+
+impl<T> NullableIssueUpdateField<T> {
+    pub fn is_unchanged(&self) -> bool {
+        matches!(self, Self::Unchanged)
+    }
+}
+
+impl<T> serde::Serialize for NullableIssueUpdateField<T>
+where
+    T: serde::Serialize,
+{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        match self {
+            Self::Unchanged => serializer.serialize_none(),
+            Self::Set(value) => value.serialize(serializer),
+            Self::Clear => serializer.serialize_none(),
+        }
+    }
+}
+
+impl cynic::coercions::CoercesTo<Option<String>> for NullableIssueUpdateField<String> {}
+
+impl cynic::schema::IsScalar<String> for NullableIssueUpdateField<String> {
+    type SchemaType = String;
+}
+
 /// Issue update input
 #[derive(cynic::InputObject, Debug, Clone)]
 #[cynic(schema = "linear", graphql_type = "IssueUpdateInput")]
@@ -290,6 +327,11 @@ pub struct IssueUpdateInput {
     pub priority: Option<i32>,
     #[cynic(rename = "parentId", skip_serializing_if = "Option::is_none")]
     pub parent_id: Option<String>,
+    #[cynic(
+        rename = "projectMilestoneId",
+        skip_serializing_if = "NullableIssueUpdateField::is_unchanged"
+    )]
+    pub project_milestone_id: NullableIssueUpdateField<String>,
 }
 
 /// Issue update mutation variables

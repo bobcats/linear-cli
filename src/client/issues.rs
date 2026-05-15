@@ -1,4 +1,3 @@
-use crate::client::LinearClient;
 use crate::client::queries::{
     BooleanComparatorInput, IDComparatorInput, IssueArchiveMutation, IssueArchiveMutationVariables,
     IssueCreateInput, IssueCreateMutation, IssueCreateMutationVariables, IssueDeleteMutation,
@@ -6,8 +5,10 @@ use crate::client::queries::{
     IssueRelationCreateInput, IssueRelationCreateMutation, IssueRelationCreateMutationVariables,
     IssueRelationType, IssueUnarchiveMutation, IssueUnarchiveMutationVariables, IssueUpdateInput,
     IssueUpdateMutation, IssueUpdateMutationVariables, IssuesQuery, IssuesQueryVariables,
-    NullableProjectFilterInput, NullableUserFilterInput, StringComparatorInput,
+    NullableIssueUpdateField, NullableProjectFilterInput, NullableUserFilterInput,
+    StringComparatorInput,
 };
+use crate::client::LinearClient;
 use crate::error::CliError;
 use crate::issues::types::Issue;
 use cynic::{MutationBuilder, QueryBuilder};
@@ -26,6 +27,15 @@ pub struct CreateIssueInput {
     pub project_milestone_id: Option<String>,
 }
 
+/// Patch state for issue fields that can be left unchanged, set, or cleared.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub enum IssueFieldPatch<T> {
+    #[default]
+    Unchanged,
+    Set(T),
+    Clear,
+}
+
 /// Update issue request payload used by the issue client.
 #[derive(Debug, Clone, Default)]
 pub struct UpdateIssueInput {
@@ -36,6 +46,7 @@ pub struct UpdateIssueInput {
     pub state_id: Option<String>,
     pub priority: Option<i32>,
     pub parent_id: Option<String>,
+    pub project_milestone_id: IssueFieldPatch<String>,
 }
 
 /// Create issue relation request payload.
@@ -286,6 +297,11 @@ impl IssueClient for LinearClient {
                 state_id: input.state_id,
                 priority: input.priority,
                 parent_id: input.parent_id,
+                project_milestone_id: match input.project_milestone_id {
+                    IssueFieldPatch::Unchanged => NullableIssueUpdateField::Unchanged,
+                    IssueFieldPatch::Set(value) => NullableIssueUpdateField::Set(value),
+                    IssueFieldPatch::Clear => NullableIssueUpdateField::Clear,
+                },
             },
         });
 

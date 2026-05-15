@@ -1,4 +1,4 @@
-use criterion::{Criterion, black_box, criterion_group, criterion_main};
+use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use cynic::MutationBuilder;
 use linear_cli::client::queries::{
     CommentCreateInput, CommentCreateMutation, CommentCreateMutationVariables,
@@ -6,7 +6,7 @@ use linear_cli::client::queries::{
     IssueCreateMutationVariables, IssueRelationCreateInput, IssueRelationCreateMutation,
     IssueRelationCreateMutationVariables, IssueRelationType, IssueUnarchiveMutation,
     IssueUnarchiveMutationVariables, IssueUpdateInput, IssueUpdateMutation,
-    IssueUpdateMutationVariables,
+    IssueUpdateMutationVariables, NullableIssueUpdateField,
 };
 use linear_cli::error::CliError;
 use linear_cli::issues::resolver::{
@@ -40,6 +40,7 @@ fn issue_update_vars() -> IssueUpdateMutationVariables {
             state_id: Some("state-2".to_string()),
             priority: Some(1),
             parent_id: None,
+            project_milestone_id: NullableIssueUpdateField::Unchanged,
         },
     }
 }

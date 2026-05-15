@@ -1,10 +1,10 @@
 #![allow(clippy::unit_arg)]
 
 use clap::Parser;
-use criterion::{Criterion, black_box, criterion_group, criterion_main};
-use linear_cli::auth::UserInfo;
+use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use linear_cli::auth::config::TestConfigProvider;
 use linear_cli::auth::storage::MockTokenStorage;
+use linear_cli::auth::UserInfo;
 use linear_cli::cli::Cli;
 use linear_cli::client::comments::{CommentClient, CreateCommentInput};
 use linear_cli::client::cycles::CycleClient;
@@ -439,7 +439,9 @@ fn bench_issue_handler_paths(c: &mut Criterion) {
                     Some("state-1".to_string()),
                     None,
                     Some(1),
+                    None,
                     &issue_client,
+                    &lookup,
                     &lookup,
                     &config,
                     &storage,
