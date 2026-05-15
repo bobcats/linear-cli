@@ -16,6 +16,7 @@ fn test_matrix_includes_parse_bench_groups_for_all_non_auth_command_families() {
     assert!(COMMAND_PATHS_BENCH.contains("cli_parse_project_paths"));
     assert!(COMMAND_PATHS_BENCH.contains("cli_parse_team_paths"));
     assert!(COMMAND_PATHS_BENCH.contains("cli_parse_cycle_paths"));
+    assert!(COMMAND_PATHS_BENCH.contains("cli_parse_milestone_paths"));
 }
 
 #[test]
@@ -24,6 +25,7 @@ fn test_matrix_includes_handler_bench_groups_for_all_non_auth_command_families()
     assert!(COMMAND_PATHS_BENCH.contains("project_handlers_json"));
     assert!(COMMAND_PATHS_BENCH.contains("team_handlers_json"));
     assert!(COMMAND_PATHS_BENCH.contains("cycle_handlers_json"));
+    assert!(COMMAND_PATHS_BENCH.contains("milestone_handlers_json"));
 }
 
 #[test]
@@ -32,6 +34,8 @@ fn test_matrix_includes_format_bench_groups_for_all_non_auth_command_families() 
     assert!(FORMATTERS_BENCH.contains("bench_project_list"));
     assert!(FORMATTERS_BENCH.contains("bench_team_list"));
     assert!(FORMATTERS_BENCH.contains("bench_cycle_list"));
+    assert!(FORMATTERS_BENCH.contains("bench_milestone_list"));
+    assert!(FORMATTERS_BENCH.contains("milestone_list"));
 }
 
 #[test]
@@ -44,4 +48,7 @@ fn test_matrix_includes_write_path_bench_groups() {
     assert!(WRITE_OPS_BENCH.contains("write_mutation_build"));
     assert!(WRITE_OPS_BENCH.contains("write_mutation_build_and_serialize"));
     assert!(WRITE_OPS_BENCH.contains("issue_reference_resolver"));
+    assert!(WRITE_OPS_BENCH.contains("project_milestone_create"));
+    assert!(WRITE_OPS_BENCH.contains("project_milestone_update"));
+    assert!(WRITE_OPS_BENCH.contains("project_milestone_delete"));
 }

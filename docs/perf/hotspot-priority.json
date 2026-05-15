@@ -1,4 +1,4 @@
 {
-  "description": "Hotspot priority list generated from baseline ranking. Update via tooling as optimization sequencing evolves.",
+  "description": "Hotspot priority list generated from post-milestone-performance-coverage ranking. Keep empty when no measured hotspot is selected for immediate optimization.",
   "top_hotspots": []
 }

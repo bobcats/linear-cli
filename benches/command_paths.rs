@@ -11,6 +11,7 @@ use linear_cli::client::cycles::CycleClient;
 use linear_cli::client::issues::{
     CreateIssueInput, CreateIssueRelationInput, IssueClient, UpdateIssueInput,
 };
+use linear_cli::client::milestones::{CreateMilestoneInput, MilestoneClient, UpdateMilestoneInput};
 use linear_cli::client::projects::ProjectClient;
 use linear_cli::client::teams::TeamClient;
 use linear_cli::comments::types::Comment;
@@ -27,6 +28,11 @@ use linear_cli::issues::commands::{
 };
 use linear_cli::issues::resolver::IssueReferenceLookup;
 use linear_cli::issues::types::{Issue, IssueState, Priority, User};
+use linear_cli::milestones::commands::{
+    handle_create as handle_milestone_create, handle_delete as handle_milestone_delete,
+    handle_list as handle_milestone_list, handle_update as handle_milestone_update,
+    handle_view as handle_milestone_view,
+};
 use linear_cli::milestones::resolver::MilestoneReferenceLookup;
 use linear_cli::milestones::types::{Milestone, MilestoneProject};
 use linear_cli::output::OutputFormat;
@@ -278,6 +284,67 @@ impl CycleClient for BenchCycleClient {
 
     fn list_cycles(&self, _token: &str, _limit: usize) -> Result<Vec<Cycle>, CliError> {
         Ok(vec![self.cycle.clone()])
+    }
+}
+
+struct BenchmarkMilestoneClient;
+
+impl MilestoneClient for BenchmarkMilestoneClient {
+    fn get_milestone(&self, _token: &str, id: &str) -> Result<Milestone, CliError> {
+        Ok(benchmark_milestone(id, "Beta"))
+    }
+
+    fn list_milestones(
+        &self,
+        _token: &str,
+        _project_id: Option<&str>,
+        _name: Option<&str>,
+        limit: usize,
+    ) -> Result<Vec<Milestone>, CliError> {
+        Ok((0..limit.min(50))
+            .map(|idx| benchmark_milestone(&format!("milestone-{idx}"), "Beta"))
+            .collect())
+    }
+
+    fn create_milestone(
+        &self,
+        _token: &str,
+        _input: CreateMilestoneInput,
+    ) -> Result<Milestone, CliError> {
+        Ok(benchmark_milestone("milestone-1", "Beta"))
+    }
+
+    fn update_milestone(
+        &self,
+        _token: &str,
+        _id: &str,
+        _input: UpdateMilestoneInput,
+    ) -> Result<Milestone, CliError> {
+        Ok(benchmark_milestone("milestone-1", "GA"))
+    }
+
+    fn delete_milestone(&self, _token: &str, _id: &str) -> Result<(), CliError> {
+        Ok(())
+    }
+}
+
+fn benchmark_milestone(id: &str, name: &str) -> Milestone {
+    Milestone {
+        id: id.to_string(),
+        name: name.to_string(),
+        description: Some("Benchmark milestone".to_string()),
+        status: "next".to_string(),
+        progress: 0.5,
+        sort_order: 1000.0,
+        target_date: Some("2026-06-30".to_string()),
+        project: MilestoneProject {
+            id: "project-1".to_string(),
+            name: "Project".to_string(),
+            slug_id: "project".to_string(),
+        },
+        created_at: "2026-01-01T00:00:00Z".to_string(),
+        updated_at: "2026-01-02T00:00:00Z".to_string(),
+        archived_at: None,
     }
 }
 
@@ -960,6 +1027,116 @@ fn bench_cycle_handler_paths(c: &mut Criterion) {
     format_group.finish();
 }
 
+fn bench_milestone_handlers(c: &mut Criterion) {
+    let config = benchmark_config();
+    let storage = benchmark_storage();
+    let io = NoopIo;
+    let lookup = PassthroughLookup;
+    let client = BenchmarkMilestoneClient;
+
+    let mut group = c.benchmark_group("milestone_handlers_json");
+
+    group.bench_function("list", |b| {
+        b.iter(|| {
+            black_box(
+                handle_milestone_list(
+                    Some("APP"),
+                    50,
+                    &client,
+                    &lookup,
+                    &config,
+                    &storage,
+                    &io,
+                    Some(OutputFormat::Json),
+                )
+                .unwrap(),
+            )
+        })
+    });
+
+    group.bench_function("view", |b| {
+        b.iter(|| {
+            black_box(
+                handle_milestone_view(
+                    "Beta",
+                    Some("APP"),
+                    &client,
+                    &lookup,
+                    &config,
+                    &storage,
+                    &io,
+                    Some(OutputFormat::Json),
+                )
+                .unwrap(),
+            )
+        })
+    });
+
+    group.bench_function("create", |b| {
+        b.iter(|| {
+            black_box(
+                handle_milestone_create(
+                    "APP",
+                    "Beta",
+                    Some("Benchmark milestone".to_string()),
+                    Some("2026-06-30".to_string()),
+                    &client,
+                    &lookup,
+                    &config,
+                    &storage,
+                    &io,
+                    Some(OutputFormat::Json),
+                )
+                .unwrap(),
+            )
+        })
+    });
+
+    group.bench_function("update", |b| {
+        b.iter(|| {
+            black_box(
+                handle_milestone_update(
+                    "Beta",
+                    Some("APP"),
+                    UpdateMilestoneInput {
+                        name: Some("GA".to_string()),
+                        description: None,
+                        project_id: None,
+                        target_date: None,
+                    },
+                    &client,
+                    &lookup,
+                    &config,
+                    &storage,
+                    &io,
+                    Some(OutputFormat::Json),
+                )
+                .unwrap(),
+            )
+        })
+    });
+
+    group.bench_function("delete", |b| {
+        b.iter(|| {
+            black_box(
+                handle_milestone_delete(
+                    "Beta",
+                    Some("APP"),
+                    &client,
+                    &lookup,
+                    &config,
+                    &storage,
+                    &io,
+                    Some(OutputFormat::Json),
+                )
+                .unwrap(),
+            )
+        })
+    });
+
+    group.finish();
+}
+
 fn bench_cli_parse_paths(c: &mut Criterion) {
     let mut issue_group = c.benchmark_group("cli_parse_issue_paths");
 
@@ -1155,6 +1332,101 @@ fn bench_cli_parse_paths(c: &mut Criterion) {
     });
 
     cycle_group.finish();
+
+    let mut milestone_group = c.benchmark_group("cli_parse_milestone_paths");
+
+    milestone_group.bench_function("milestone_list", |b| {
+        b.iter(|| {
+            black_box(
+                Cli::try_parse_from([
+                    "linear",
+                    "milestone",
+                    "list",
+                    "--project",
+                    "APP",
+                    "--limit",
+                    "50",
+                    "--json",
+                ])
+                .unwrap(),
+            )
+        })
+    });
+
+    milestone_group.bench_function("milestone_view", |b| {
+        b.iter(|| {
+            black_box(
+                Cli::try_parse_from([
+                    "linear",
+                    "milestone",
+                    "view",
+                    "Beta",
+                    "--project",
+                    "APP",
+                    "--json",
+                ])
+                .unwrap(),
+            )
+        })
+    });
+
+    milestone_group.bench_function("milestone_create", |b| {
+        b.iter(|| {
+            black_box(
+                Cli::try_parse_from([
+                    "linear",
+                    "milestone",
+                    "create",
+                    "--project",
+                    "APP",
+                    "--name",
+                    "Beta",
+                    "--target-date",
+                    "2026-06-30",
+                    "--json",
+                ])
+                .unwrap(),
+            )
+        })
+    });
+
+    milestone_group.bench_function("milestone_update", |b| {
+        b.iter(|| {
+            black_box(
+                Cli::try_parse_from([
+                    "linear",
+                    "milestone",
+                    "update",
+                    "Beta",
+                    "--project",
+                    "APP",
+                    "--name",
+                    "GA",
+                    "--json",
+                ])
+                .unwrap(),
+            )
+        })
+    });
+
+    milestone_group.bench_function("milestone_delete", |b| {
+        b.iter(|| {
+            black_box(
+                Cli::try_parse_from([
+                    "linear",
+                    "milestone",
+                    "delete",
+                    "Beta",
+                    "--project",
+                    "APP",
+                    "--json",
+                ])
+                .unwrap(),
+            )
+        })
+    });
+
+    milestone_group.finish();
 }
 
 criterion_group!(
@@ -1163,6 +1435,7 @@ criterion_group!(
     bench_project_handler_paths,
     bench_team_handler_paths,
     bench_cycle_handler_paths,
+    bench_milestone_handlers,
     bench_cli_parse_paths
 );
 criterion_main!(benches);

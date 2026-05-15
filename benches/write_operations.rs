@@ -6,7 +6,11 @@ use linear_cli::client::queries::{
     IssueCreateMutationVariables, IssueRelationCreateInput, IssueRelationCreateMutation,
     IssueRelationCreateMutationVariables, IssueRelationType, IssueUnarchiveMutation,
     IssueUnarchiveMutationVariables, IssueUpdateInput, IssueUpdateMutation,
-    IssueUpdateMutationVariables, NullableIssueUpdateField,
+    IssueUpdateMutationVariables, NullableIssueUpdateField, ProjectMilestoneCreateInput,
+    ProjectMilestoneCreateMutation, ProjectMilestoneCreateMutationVariables,
+    ProjectMilestoneDeleteMutation, ProjectMilestoneDeleteMutationVariables,
+    ProjectMilestoneUpdateInput, ProjectMilestoneUpdateMutation,
+    ProjectMilestoneUpdateMutationVariables, TimelessDate,
 };
 use linear_cli::error::CliError;
 use linear_cli::issues::resolver::{
@@ -77,6 +81,35 @@ fn issue_relation_vars() -> IssueRelationCreateMutationVariables {
     }
 }
 
+fn project_milestone_create_vars() -> ProjectMilestoneCreateMutationVariables {
+    ProjectMilestoneCreateMutationVariables {
+        input: ProjectMilestoneCreateInput {
+            project_id: "project-1".to_string(),
+            name: "Beta".to_string(),
+            description: Some("Beta readiness".to_string()),
+            target_date: Some(TimelessDate("2026-06-30".to_string())),
+        },
+    }
+}
+
+fn project_milestone_update_vars() -> ProjectMilestoneUpdateMutationVariables {
+    ProjectMilestoneUpdateMutationVariables {
+        id: "milestone-1".to_string(),
+        input: ProjectMilestoneUpdateInput {
+            name: Some("GA".to_string()),
+            description: Some("General availability".to_string()),
+            project_id: None,
+            target_date: Some(TimelessDate("2026-07-31".to_string())),
+        },
+    }
+}
+
+fn project_milestone_delete_vars() -> ProjectMilestoneDeleteMutationVariables {
+    ProjectMilestoneDeleteMutationVariables {
+        id: "milestone-1".to_string(),
+    }
+}
+
 fn bench_write_mutation_build(c: &mut Criterion) {
     let mut group = c.benchmark_group("write_mutation_build");
 
@@ -102,6 +135,30 @@ fn bench_write_mutation_build(c: &mut Criterion) {
 
     group.bench_function("issue_relation_create", |b| {
         b.iter(|| black_box(IssueRelationCreateMutation::build(issue_relation_vars())))
+    });
+
+    group.bench_function("project_milestone_create", |b| {
+        b.iter(|| {
+            black_box(ProjectMilestoneCreateMutation::build(
+                project_milestone_create_vars(),
+            ))
+        })
+    });
+
+    group.bench_function("project_milestone_update", |b| {
+        b.iter(|| {
+            black_box(ProjectMilestoneUpdateMutation::build(
+                project_milestone_update_vars(),
+            ))
+        })
+    });
+
+    group.bench_function("project_milestone_delete", |b| {
+        b.iter(|| {
+            black_box(ProjectMilestoneDeleteMutation::build(
+                project_milestone_delete_vars(),
+            ))
+        })
     });
 
     group.finish();
@@ -148,6 +205,27 @@ fn bench_write_mutation_serialize(c: &mut Criterion) {
     group.bench_function("issue_relation_create", |b| {
         b.iter(|| {
             let operation = IssueRelationCreateMutation::build(issue_relation_vars());
+            black_box(serde_json::to_string(&operation).unwrap())
+        })
+    });
+
+    group.bench_function("project_milestone_create", |b| {
+        b.iter(|| {
+            let operation = ProjectMilestoneCreateMutation::build(project_milestone_create_vars());
+            black_box(serde_json::to_string(&operation).unwrap())
+        })
+    });
+
+    group.bench_function("project_milestone_update", |b| {
+        b.iter(|| {
+            let operation = ProjectMilestoneUpdateMutation::build(project_milestone_update_vars());
+            black_box(serde_json::to_string(&operation).unwrap())
+        })
+    });
+
+    group.bench_function("project_milestone_delete", |b| {
+        b.iter(|| {
+            let operation = ProjectMilestoneDeleteMutation::build(project_milestone_delete_vars());
             black_box(serde_json::to_string(&operation).unwrap())
         })
     });

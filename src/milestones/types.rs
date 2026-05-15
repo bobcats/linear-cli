@@ -2,8 +2,8 @@ use crate::error::CliError;
 use crate::output::{
     CsvResultExt, Formattable, MarkdownFormatter, TableFormatter, fast_markdown_formatter,
     generic_json_formatter, generic_json_list_formatter, generic_table_formatter,
-    generic_table_list_formatter,
 };
+use comfy_table::{Cell, Table, presets::ASCII_MARKDOWN};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::fmt::Write as FmtWrite;
@@ -36,7 +36,14 @@ pub struct Milestone {
 pub struct MilestoneList(pub Vec<Milestone>);
 
 fn format_progress_percent(progress: f64) -> String {
-    format!("{:.0}%", progress * 100.0)
+    let percent = (progress * 100.0).round();
+    if percent.is_finite() && percent >= i64::MIN as f64 && percent <= i64::MAX as f64 {
+        let mut output = (percent as i64).to_string();
+        output.push('%');
+        return output;
+    }
+
+    format!("{percent:.0}%")
 }
 
 impl TableFormatter for Milestone {
@@ -278,22 +285,29 @@ impl Formattable for MilestoneList {
     }
 
     fn to_table(&self) -> Result<String, CliError> {
-        generic_table_list_formatter(
-            &self.0,
-            &["ID", "Name", "Project", "Status", "Progress", "Target Date"],
-            |milestone| {
-                vec![
-                    milestone.id.clone(),
-                    milestone.name.clone(),
-                    milestone.project.name.clone(),
-                    milestone.status.clone(),
-                    format_progress_percent(milestone.progress),
-                    milestone
-                        .target_date
-                        .clone()
-                        .unwrap_or_else(|| "—".to_string()),
-                ]
-            },
-        )
+        let mut table = Table::new();
+        table.load_preset(ASCII_MARKDOWN);
+        table.set_header([
+            Cell::new("ID"),
+            Cell::new("Name"),
+            Cell::new("Project"),
+            Cell::new("Status"),
+            Cell::new("Progress"),
+            Cell::new("Target Date"),
+        ]);
+
+        for milestone in &self.0 {
+            let progress = format_progress_percent(milestone.progress);
+            table.add_row([
+                Cell::new(milestone.id.as_str()),
+                Cell::new(milestone.name.as_str()),
+                Cell::new(milestone.project.name.as_str()),
+                Cell::new(milestone.status.as_str()),
+                Cell::new_owned(progress),
+                Cell::new(milestone.target_date.as_deref().unwrap_or("—")),
+            ]);
+        }
+
+        Ok(table.to_string())
     }
 }

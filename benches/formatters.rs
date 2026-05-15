@@ -5,6 +5,7 @@ use linear_cli::cycles::types::{Cycle, CycleList};
 use linear_cli::issues::types::{
     Issue, IssueList, IssueState, ParentIssue, Priority, SubIssue, User,
 };
+use linear_cli::milestones::types::{Milestone, MilestoneList, MilestoneProject};
 use linear_cli::output::Formattable;
 use linear_cli::projects::types::{Project, ProjectList};
 use linear_cli::teams::types::{Team, TeamList};
@@ -104,6 +105,36 @@ fn create_test_issues(count: usize) -> Vec<Issue> {
     (0..count).map(create_test_issue).collect()
 }
 
+fn create_test_milestone(id: usize) -> Milestone {
+    Milestone {
+        id: format!("milestone-{id}"),
+        name: format!("Milestone {id}"),
+        description: Some(format!("Milestone {id} for coordinated delivery.")),
+        status: match id % 4 {
+            0 => "unstarted",
+            1 => "next",
+            2 => "overdue",
+            _ => "done",
+        }
+        .to_string(),
+        progress: (id % 101) as f64 / 100.0,
+        sort_order: id as f64 * 1000.0,
+        target_date: (!id.is_multiple_of(3)).then(|| "2026-06-30".to_string()),
+        project: MilestoneProject {
+            id: format!("project-{}", id % 10),
+            name: format!("Project {}", id % 10),
+            slug_id: format!("project-{}", id % 10),
+        },
+        created_at: "2026-01-01T00:00:00Z".to_string(),
+        updated_at: "2026-01-02T00:00:00Z".to_string(),
+        archived_at: None,
+    }
+}
+
+fn create_test_milestones(count: usize) -> Vec<Milestone> {
+    (0..count).map(create_test_milestone).collect()
+}
+
 /// Benchmark single issue formatters
 fn bench_single_issue(c: &mut Criterion) {
     let issue = create_test_issue(123);
@@ -168,6 +199,34 @@ fn create_test_team(id: usize) -> Team {
         private: id.is_multiple_of(2),
         created_at: "2025-01-15T10:30:00Z".to_string(),
     }
+}
+
+fn bench_milestone_list(c: &mut Criterion) {
+    let mut group = c.benchmark_group("milestone_list");
+
+    for size in [10, 50, 100, 500] {
+        let milestones = MilestoneList(create_test_milestones(size));
+
+        group.bench_with_input(BenchmarkId::new("json", size), &milestones, |b, list| {
+            b.iter(|| black_box(list.to_json().unwrap()))
+        });
+
+        group.bench_with_input(BenchmarkId::new("csv", size), &milestones, |b, list| {
+            b.iter(|| black_box(list.to_csv().unwrap()))
+        });
+
+        group.bench_with_input(
+            BenchmarkId::new("markdown", size),
+            &milestones,
+            |b, list| b.iter(|| black_box(list.to_markdown().unwrap())),
+        );
+
+        group.bench_with_input(BenchmarkId::new("table", size), &milestones, |b, list| {
+            b.iter(|| black_box(list.to_table().unwrap()))
+        });
+    }
+
+    group.finish();
 }
 
 /// Benchmark single team formatters
@@ -851,6 +910,7 @@ criterion_group!(
     bench_issue_list,
     bench_issue_hierarchy,
     bench_issue_with_comments,
+    bench_milestone_list,
     bench_single_team,
     bench_team_list,
     bench_single_project,

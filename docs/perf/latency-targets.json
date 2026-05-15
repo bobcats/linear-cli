@@ -1,6 +1,6 @@
 {
-  "generated_from": "target_latest/criterion (post-perf-pass, 2026-03-12)",
-  "generated_at": "2026-03-12T00:00:00Z",
+  "generated_from": "target_latest/criterion (post-milestone-performance-coverage, 2026-05-14)",
+  "generated_at": "2026-05-14T00:00:00Z",
   "targets": [
     {
       "benchmark_id": "table_hotspot_large_rows/project_list_table/1000",
@@ -90,6 +90,12 @@
       "benchmark_id": "issue_list/json/500",
       "baseline_ns": 170340.13,
       "target_ns": 170340.13,
+      "tolerance_percent": 10.0
+    },
+    {
+      "benchmark_id": "milestone_list/table/500",
+      "baseline_ns": 930789.72,
+      "target_ns": 930789.72,
       "tolerance_percent": 10.0
     }
   ]
