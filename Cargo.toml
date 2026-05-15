@@ -3,7 +3,7 @@ members = [".", "crates/linear-schema", "crates/linear-queries"]
 
 [package]
 name = "linear-cli"
-version = "0.2.2"
+version = "0.2.3"
 edition = "2024"
 
 [dependencies]
