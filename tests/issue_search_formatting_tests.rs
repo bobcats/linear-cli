@@ -25,6 +25,7 @@ fn make_search_result(identifier: &str, title: &str) -> Issue {
         updated_at: "2025-01-01T00:00:00Z".to_string(),
         url: format!("https://linear.app/issue/{identifier}"),
         project: None,
+        milestone: None,
         parent: None,
         children: None,
         comments: None,

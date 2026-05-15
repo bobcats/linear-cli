@@ -149,6 +149,13 @@ pub struct IssueProject {
     pub slug_id: String,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct IssueMilestone {
+    pub id: String,
+    pub name: String,
+    pub target_date: Option<String>,
+}
+
 /// Issue details returned from Linear API
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Issue {
@@ -161,6 +168,8 @@ pub struct Issue {
     pub assignee: Option<User>,
     pub creator: User,
     pub project: Option<IssueProject>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub milestone: Option<IssueMilestone>,
     pub created_at: String,
     pub updated_at: String,
     pub url: String,
@@ -192,6 +201,8 @@ impl Formattable for IssueList {
             "priority",
             "assignee",
             "creator",
+            "milestone_name",
+            "milestone_id",
             "created_at",
             "updated_at",
             "url",
@@ -211,6 +222,8 @@ impl Formattable for IssueList {
                     .map(|u| u.name.as_str())
                     .unwrap_or(""),
                 &issue.creator.name,
+                issue.milestone.as_ref().map(|m| m.name.as_str()).unwrap_or(""),
+                issue.milestone.as_ref().map(|m| m.id.as_str()).unwrap_or(""),
                 &issue.created_at,
                 &issue.updated_at,
                 &issue.url,
@@ -352,6 +365,13 @@ impl TableFormatter for Issue {
             ));
         }
 
+        if let Some(milestone) = &self.milestone {
+            rows.push((
+                Cow::Borrowed("Milestone"),
+                Cow::Borrowed(milestone.name.as_str()),
+            ));
+        }
+
         if let Some(parent) = &self.parent {
             rows.push((
                 Cow::Borrowed("Parent"),
@@ -452,6 +472,11 @@ impl MarkdownFormatter for Issue {
         if let Some(project) = &self.project {
             writeln!(output, "**Project:** {}", project.name)
                 .map_err(|e| CliError::General(format!("Failed to write markdown project: {e}")))?;
+        }
+        if let Some(milestone) = &self.milestone {
+            writeln!(output, "**Milestone:** {}", milestone.name).map_err(|e| {
+                CliError::General(format!("Failed to write markdown milestone: {e}"))
+            })?;
         }
         if let Some(parent) = &self.parent {
             writeln!(
@@ -556,6 +581,8 @@ impl Formattable for Issue {
             "created_at",
             "updated_at",
             "url",
+            "milestone_name",
+            "milestone_id",
             "parent",
             "children",
             "comment_count",
@@ -605,6 +632,8 @@ impl Formattable for Issue {
             &self.created_at,
             &self.updated_at,
             &self.url,
+            self.milestone.as_ref().map(|m| m.name.as_str()).unwrap_or(""),
+            self.milestone.as_ref().map(|m| m.id.as_str()).unwrap_or(""),
             parent_str,
             children_str,
             comment_str,
@@ -670,6 +699,16 @@ impl From<queries::IssueChildNode> for SubIssue {
     }
 }
 
+impl From<queries::IssueProjectMilestone> for IssueMilestone {
+    fn from(milestone: queries::IssueProjectMilestone) -> Self {
+        IssueMilestone {
+            id: milestone.id.inner().to_string(),
+            name: milestone.name,
+            target_date: milestone.target_date.map(|date| date.0),
+        }
+    }
+}
+
 impl From<queries::IssueProject> for IssueProject {
     fn from(project: queries::IssueProject) -> Self {
         IssueProject {
@@ -728,6 +767,7 @@ impl TryFrom<queries::IssueNode> for Issue {
                 .map(Into::into)
                 .ok_or_else(|| CliError::General("Issue creator not found".to_string()))?,
             project: node.project.map(Into::into),
+            milestone: node.project_milestone.map(Into::into),
             created_at: node.created_at.0,
             updated_at: node.updated_at.0,
             url: node.url,
@@ -759,6 +799,7 @@ impl TryFrom<queries::SearchIssueNode> for Issue {
                 .map(Into::into)
                 .ok_or_else(|| CliError::General("Issue creator not found".to_string()))?,
             project: node.project.map(Into::into),
+            milestone: node.project_milestone.map(Into::into),
             created_at: node.created_at.0,
             updated_at: node.updated_at.0,
             url: node.url,

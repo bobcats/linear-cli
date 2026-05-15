@@ -25,6 +25,7 @@ fn create_test_issue_full() -> Issue {
             email: "bob@example.com".to_string(),
         },
         project: None,
+        milestone: None,
         created_at: "2025-11-01T10:00:00Z".to_string(),
         updated_at: "2025-11-13T09:30:00Z".to_string(),
         url: "https://linear.app/team/issue/ENG-123".to_string(),
@@ -53,6 +54,7 @@ fn create_test_issue_minimal() -> Issue {
             email: "bob@example.com".to_string(),
         },
         project: None,
+        milestone: None,
         created_at: "2025-11-02T14:00:00Z".to_string(),
         updated_at: "2025-11-02T14:00:00Z".to_string(),
         url: "https://linear.app/team/issue/ENG-124".to_string(),
@@ -65,6 +67,29 @@ fn create_test_issue_minimal() -> Issue {
 // ============================================================================
 // JSON Formatter Tests
 // ============================================================================
+
+#[test]
+fn test_issue_with_milestone_shows_milestone_name() {
+    use linear_cli::issues::types::IssueMilestone;
+
+    let mut issue = create_test_issue_full();
+    issue.milestone = Some(IssueMilestone {
+        id: "milestone-1".to_string(),
+        name: "Beta".to_string(),
+        target_date: Some("2026-06-30".to_string()),
+    });
+
+    let table = issue.to_table().unwrap();
+    assert!(table.contains("Milestone"));
+    assert!(table.contains("Beta"));
+
+    let md = issue.to_markdown().unwrap();
+    assert!(md.contains("**Milestone:** Beta"));
+
+    let json = issue.to_json().unwrap();
+    let parsed: serde_json::Value = serde_json::from_str(&json).unwrap();
+    assert_eq!(parsed["milestone"]["name"], "Beta");
+}
 
 #[test]
 fn test_issue_to_json_with_full_data() {

@@ -167,6 +167,7 @@ fn sample_issue() -> Issue {
             email: "bob@example.com".to_string(),
         },
         project: None,
+        milestone: None,
         created_at: "2026-02-23T00:00:00Z".to_string(),
         updated_at: "2026-02-24T00:00:00Z".to_string(),
         url: "https://linear.app/company/issue/ENG-123".to_string(),

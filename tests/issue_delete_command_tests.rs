@@ -110,6 +110,7 @@ fn sample_issue() -> Issue {
         updated_at: "2025-01-01T00:00:00Z".to_string(),
         url: "https://linear.app/issue/ENG-123".to_string(),
         project: None,
+        milestone: None,
         parent: None,
         children: None,
         comments: None,

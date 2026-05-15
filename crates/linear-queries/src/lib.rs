@@ -56,6 +56,16 @@ pub struct WorkflowState {
     pub state_type: String,
 }
 
+/// Project milestone information for issues.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, QueryFragment)]
+#[cynic(graphql_type = "ProjectMilestone", schema = "linear")]
+pub struct IssueProjectMilestone {
+    pub id: cynic::Id,
+    pub name: String,
+    #[cynic(rename = "targetDate")]
+    pub target_date: Option<TimelessDate>,
+}
+
 /// Lightweight parent issue reference (avoids recursive Issue fragment)
 #[derive(Debug, Clone, Serialize, QueryFragment)]
 #[cynic(graphql_type = "Issue", schema = "linear")]
@@ -98,6 +108,8 @@ pub struct IssueNode {
     pub assignee: Option<IssueUser>,
     pub creator: Option<IssueUser>,
     pub project: Option<IssueProject>,
+    #[cynic(rename = "projectMilestone")]
+    pub project_milestone: Option<IssueProjectMilestone>,
     #[cynic(rename = "createdAt")]
     pub created_at: DateTime,
     #[cynic(rename = "updatedAt")]
@@ -1164,6 +1176,8 @@ pub struct SearchIssueNode {
     pub assignee: Option<IssueUser>,
     pub creator: Option<IssueUser>,
     pub project: Option<IssueProject>,
+    #[cynic(rename = "projectMilestone")]
+    pub project_milestone: Option<IssueProjectMilestone>,
     #[cynic(rename = "createdAt")]
     pub created_at: DateTime,
     #[cynic(rename = "updatedAt")]

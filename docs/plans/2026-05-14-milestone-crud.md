@@ -725,7 +725,7 @@ git commit -m "feat(milestone): wire milestone commands"
 - Modify: issue tests with `Issue { ... }` literals
 - Modify: `tests/issue_formatting_tests.rs`
 
-- [ ] **Step 1: Write failing issue formatter test**
+- [x] **Step 1: Write failing issue formatter test**
 
 In `tests/issue_formatting_tests.rs`, add:
 
@@ -754,7 +754,7 @@ fn test_issue_with_milestone_shows_milestone_name() {
 }
 ```
 
-- [ ] **Step 2: Run RED command**
+- [x] **Step 2: Run RED command**
 
 Run:
 
@@ -764,7 +764,7 @@ cargo test --test issue_formatting_tests test_issue_with_milestone_shows_milesto
 
 Expected: FAIL because `IssueMilestone` and `Issue::milestone` do not exist.
 
-- [ ] **Step 3: Add issue milestone domain type and formatting**
+- [x] **Step 3: Add issue milestone domain type and formatting**
 
 In `src/issues/types.rs`:
 
@@ -773,7 +773,7 @@ In `src/issues/types.rs`:
 - Update `TableFormatter`, Markdown, CSV, and list CSV/table to include milestone. For CSV/list use `milestone_name` and `milestone_id`.
 - Update all `Issue { ... }` literals in tests to include `milestone: None`.
 
-- [ ] **Step 4: Add issue GraphQL fragment field and conversion**
+- [x] **Step 4: Add issue GraphQL fragment field and conversion**
 
 In `crates/linear-queries/src/lib.rs`:
 
@@ -784,7 +784,7 @@ In `src/issues/types.rs` conversion from query nodes:
 
 - Map `project_milestone` to `IssueMilestone`.
 
-- [ ] **Step 5: Run GREEN command**
+- [x] **Step 5: Run GREEN command**
 
 Run:
 
@@ -796,7 +796,7 @@ cargo test --test issue_search_formatting_tests -- --nocapture
 
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add crates/linear-queries/src/lib.rs src/issues/types.rs tests
