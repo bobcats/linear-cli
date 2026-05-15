@@ -1,6 +1,6 @@
+use linear_cli::auth::UserInfo;
 use linear_cli::auth::config::ConfigProvider;
 use linear_cli::auth::storage::TokenStorage;
-use linear_cli::auth::UserInfo;
 use linear_cli::client::issues::{IssueClient, IssueFieldPatch, UpdateIssueInput};
 use linear_cli::error::CliError;
 use linear_cli::io::Io;

@@ -121,7 +121,12 @@ impl MilestoneReferenceLookup for PassthroughLookup {
         }))
     }
 
-    fn find_milestones_by_name(&self, _token: &str, name: &str, project_id: Option<&str>) -> Result<Vec<Milestone>, CliError> {
+    fn find_milestones_by_name(
+        &self,
+        _token: &str,
+        name: &str,
+        project_id: Option<&str>,
+    ) -> Result<Vec<Milestone>, CliError> {
         Ok(vec![Milestone {
             id: "milestone-from-name".to_string(),
             name: name.to_string(),
@@ -141,8 +146,19 @@ impl MilestoneReferenceLookup for PassthroughLookup {
         }])
     }
 
-    fn resolve_project_id_by_slug(&self, _token: &str, slug: &str) -> Result<Option<String>, CliError> {
-        Ok(Some(if slug == "APP" { "project-from-slug" } else { slug }.to_string()))
+    fn resolve_project_id_by_slug(
+        &self,
+        _token: &str,
+        slug: &str,
+    ) -> Result<Option<String>, CliError> {
+        Ok(Some(
+            if slug == "APP" {
+                "project-from-slug"
+            } else {
+                slug
+            }
+            .to_string(),
+        ))
     }
 }
 
@@ -495,47 +511,147 @@ fn test_create_with_project_scopes_milestone_resolution() {
     let captured_input: Arc<Mutex<Option<CreateIssueInput>>> = Arc::new(Mutex::new(None));
     let captured = captured_input.clone();
 
-    struct CapturingClient { captured: Arc<Mutex<Option<CreateIssueInput>>> }
+    struct CapturingClient {
+        captured: Arc<Mutex<Option<CreateIssueInput>>>,
+    }
     impl IssueClient for CapturingClient {
-        fn get_issue(&self, _token: &str, _id: &str) -> Result<Issue, CliError> { unreachable!() }
-        fn list_issues(&self, _token: &str, _assignee: Option<String>, _project: Option<String>, _limit: usize) -> Result<Vec<Issue>, CliError> { unreachable!() }
+        fn get_issue(&self, _token: &str, _id: &str) -> Result<Issue, CliError> {
+            unreachable!()
+        }
+        fn list_issues(
+            &self,
+            _token: &str,
+            _assignee: Option<String>,
+            _project: Option<String>,
+            _limit: usize,
+        ) -> Result<Vec<Issue>, CliError> {
+            unreachable!()
+        }
         fn create_issue(&self, _token: &str, input: CreateIssueInput) -> Result<Issue, CliError> {
             *self.captured.lock().unwrap() = Some(input);
             Ok(sample_issue())
         }
     }
 
-    struct Lookup { scoped_project: Arc<Mutex<Option<String>>> }
+    struct Lookup {
+        scoped_project: Arc<Mutex<Option<String>>>,
+    }
     impl IssueReferenceLookup for Lookup {
-        fn resolve_viewer_id(&self, _token: &str) -> Result<String, CliError> { Ok("viewer-123".to_string()) }
-        fn resolve_user_id_by_email(&self, _token: &str, _email: &str) -> Result<Option<String>, CliError> { Ok(Some("user-from-email".to_string())) }
-        fn resolve_team_id_by_key(&self, _token: &str, _key: &str) -> Result<Option<String>, CliError> { Ok(Some("team-from-key".to_string())) }
-        fn resolve_project_id_by_slug(&self, _token: &str, slug: &str) -> Result<Option<String>, CliError> { Ok((slug == "APP").then(|| "project-from-slug".to_string())) }
-        fn resolve_state_id_by_name(&self, _token: &str, _name: &str) -> Result<Option<String>, CliError> { Ok(Some("state-from-name".to_string())) }
-        fn resolve_issue_id_by_identifier(&self, _token: &str, _identifier: &str) -> Result<Option<String>, CliError> { Ok(Some("issue-from-identifier".to_string())) }
+        fn resolve_viewer_id(&self, _token: &str) -> Result<String, CliError> {
+            Ok("viewer-123".to_string())
+        }
+        fn resolve_user_id_by_email(
+            &self,
+            _token: &str,
+            _email: &str,
+        ) -> Result<Option<String>, CliError> {
+            Ok(Some("user-from-email".to_string()))
+        }
+        fn resolve_team_id_by_key(
+            &self,
+            _token: &str,
+            _key: &str,
+        ) -> Result<Option<String>, CliError> {
+            Ok(Some("team-from-key".to_string()))
+        }
+        fn resolve_project_id_by_slug(
+            &self,
+            _token: &str,
+            slug: &str,
+        ) -> Result<Option<String>, CliError> {
+            Ok((slug == "APP").then(|| "project-from-slug".to_string()))
+        }
+        fn resolve_state_id_by_name(
+            &self,
+            _token: &str,
+            _name: &str,
+        ) -> Result<Option<String>, CliError> {
+            Ok(Some("state-from-name".to_string()))
+        }
+        fn resolve_issue_id_by_identifier(
+            &self,
+            _token: &str,
+            _identifier: &str,
+        ) -> Result<Option<String>, CliError> {
+            Ok(Some("issue-from-identifier".to_string()))
+        }
     }
     impl MilestoneReferenceLookup for Lookup {
-        fn get_milestone_by_id(&self, _token: &str, _id: &str) -> Result<Option<Milestone>, CliError> { Ok(None) }
-        fn find_milestones_by_name(&self, _token: &str, name: &str, project_id: Option<&str>) -> Result<Vec<Milestone>, CliError> {
-            *self.scoped_project.lock().unwrap() = project_id.map(str::to_string);
-            Ok(vec![Milestone { id: "milestone-1".to_string(), name: name.to_string(), description: None, status: "next".to_string(), progress: 0.0, sort_order: 0.0, target_date: None, project: MilestoneProject { id: "project-from-slug".to_string(), name: "App".to_string(), slug_id: "app".to_string() }, created_at: "2026-01-01T00:00:00Z".to_string(), updated_at: "2026-01-01T00:00:00Z".to_string(), archived_at: None }])
+        fn get_milestone_by_id(
+            &self,
+            _token: &str,
+            _id: &str,
+        ) -> Result<Option<Milestone>, CliError> {
+            Ok(None)
         }
-        fn resolve_project_id_by_slug(&self, _token: &str, slug: &str) -> Result<Option<String>, CliError> { Ok((slug == "APP").then(|| "project-from-slug".to_string())) }
+        fn find_milestones_by_name(
+            &self,
+            _token: &str,
+            name: &str,
+            project_id: Option<&str>,
+        ) -> Result<Vec<Milestone>, CliError> {
+            *self.scoped_project.lock().unwrap() = project_id.map(str::to_string);
+            Ok(vec![Milestone {
+                id: "milestone-1".to_string(),
+                name: name.to_string(),
+                description: None,
+                status: "next".to_string(),
+                progress: 0.0,
+                sort_order: 0.0,
+                target_date: None,
+                project: MilestoneProject {
+                    id: "project-from-slug".to_string(),
+                    name: "App".to_string(),
+                    slug_id: "app".to_string(),
+                },
+                created_at: "2026-01-01T00:00:00Z".to_string(),
+                updated_at: "2026-01-01T00:00:00Z".to_string(),
+                archived_at: None,
+            }])
+        }
+        fn resolve_project_id_by_slug(
+            &self,
+            _token: &str,
+            slug: &str,
+        ) -> Result<Option<String>, CliError> {
+            Ok((slug == "APP").then(|| "project-from-slug".to_string()))
+        }
     }
 
     let scoped_project = Arc::new(Mutex::new(None));
-    let lookup = Lookup { scoped_project: scoped_project.clone() };
+    let lookup = Lookup {
+        scoped_project: scoped_project.clone(),
+    };
     let client = CapturingClient { captured };
 
     let result = handle_create(
-        "ENG", "Ship beta", None, None, Some("APP".to_string()), None, None, Some(2), Some("Beta".to_string()),
-        &client, &lookup, &lookup, &config, &storage, &io, None,
+        "ENG",
+        "Ship beta",
+        None,
+        None,
+        Some("APP".to_string()),
+        None,
+        None,
+        Some(2),
+        Some("Beta".to_string()),
+        &client,
+        &lookup,
+        &lookup,
+        &config,
+        &storage,
+        &io,
+        None,
     );
 
     assert!(result.is_ok());
-    assert_eq!(*scoped_project.lock().unwrap(), Some("project-from-slug".to_string()));
+    assert_eq!(
+        *scoped_project.lock().unwrap(),
+        Some("project-from-slug".to_string())
+    );
     let input = captured_input.lock().unwrap();
-    let input = input.as_ref().expect("create_issue should have been called");
+    let input = input
+        .as_ref()
+        .expect("create_issue should have been called");
     assert_eq!(input.project_id.as_deref(), Some("project-from-slug"));
     assert_eq!(input.project_milestone_id.as_deref(), Some("milestone-1"));
 }

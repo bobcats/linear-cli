@@ -39,6 +39,7 @@ fn test_issue_create_mutation_builds() {
             state_id: None,
             priority: None,
             parent_id: None,
+            project_milestone_id: None,
         },
     };
     let operation = linear_queries::IssueCreateMutation::build(vars);

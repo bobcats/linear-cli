@@ -64,7 +64,9 @@ fn milestone(id: &str, name: &str, project_name: &str, project_id: &str) -> Mile
 fn uuid_resolves_via_direct_lookup() {
     let id = "123e4567-e89b-12d3-a456-426614174000";
     let mut lookup = MockLookup::default();
-    lookup.by_id.insert(id.to_string(), milestone(id, "Beta", "App", "project-1"));
+    lookup
+        .by_id
+        .insert(id.to_string(), milestone(id, "Beta", "App", "project-1"));
     let resolver = MilestoneReferenceResolver::new(&lookup);
 
     let resolved = resolver.resolve_required_id("token", id, None).unwrap();
@@ -76,11 +78,17 @@ fn uuid_resolves_via_direct_lookup() {
 fn linear_url_parses_final_segment_and_resolves_direct_lookup() {
     let id = "123e4567-e89b-12d3-a456-426614174000";
     let mut lookup = MockLookup::default();
-    lookup.by_id.insert(id.to_string(), milestone(id, "Beta", "App", "project-1"));
+    lookup
+        .by_id
+        .insert(id.to_string(), milestone(id, "Beta", "App", "project-1"));
     let resolver = MilestoneReferenceResolver::new(&lookup);
 
     let resolved = resolver
-        .resolve_required_id("token", &format!("https://linear.app/acme/project/milestone/{id}"), None)
+        .resolve_required_id(
+            "token",
+            &format!("https://linear.app/acme/project/milestone/{id}"),
+            None,
+        )
         .unwrap();
 
     assert_eq!(resolved, id);
@@ -89,7 +97,10 @@ fn linear_url_parses_final_segment_and_resolves_direct_lookup() {
 #[test]
 fn global_unique_name_resolves() {
     let mut lookup = MockLookup::default();
-    lookup.by_name.insert((None, "Beta".to_string()), vec![milestone("milestone-1", "Beta", "App", "project-1")]);
+    lookup.by_name.insert(
+        (None, "Beta".to_string()),
+        vec![milestone("milestone-1", "Beta", "App", "project-1")],
+    );
     let resolver = MilestoneReferenceResolver::new(&lookup);
 
     let resolved = resolver.resolve_required_id("token", "Beta", None).unwrap();
@@ -100,11 +111,18 @@ fn global_unique_name_resolves() {
 #[test]
 fn scoped_name_uses_project_id_and_resolves() {
     let mut lookup = MockLookup::default();
-    lookup.projects.insert("APP".to_string(), "project-1".to_string());
-    lookup.by_name.insert((Some("project-1".to_string()), "Beta".to_string()), vec![milestone("milestone-1", "Beta", "App", "project-1")]);
+    lookup
+        .projects
+        .insert("APP".to_string(), "project-1".to_string());
+    lookup.by_name.insert(
+        (Some("project-1".to_string()), "Beta".to_string()),
+        vec![milestone("milestone-1", "Beta", "App", "project-1")],
+    );
     let resolver = MilestoneReferenceResolver::new(&lookup);
 
-    let resolved = resolver.resolve_required_id("token", "Beta", Some("APP".to_string())).unwrap();
+    let resolved = resolver
+        .resolve_required_id("token", "Beta", Some("APP".to_string()))
+        .unwrap();
 
     assert_eq!(resolved, "milestone-1");
 }
@@ -133,7 +151,9 @@ fn ambiguous_global_name_mentions_project_names_and_project_flag() {
 
     let result = resolver.resolve_required_id("token", "Beta", None);
 
-    assert!(matches!(result, Err(CliError::InvalidArgs(message)) if message.contains("--project") && message.contains("App") && message.contains("Web")));
+    assert!(
+        matches!(result, Err(CliError::InvalidArgs(message)) if message.contains("--project") && message.contains("App") && message.contains("Web"))
+    );
 }
 
 #[test]
@@ -144,7 +164,11 @@ fn null_returns_clear_patch_when_allowed() {
     let resolved = resolver
         .resolve_patch(
             "token",
-            ResolveMilestoneInput { reference: Some("null".to_string()), project: None, allow_null_clear: true },
+            ResolveMilestoneInput {
+                reference: Some("null".to_string()),
+                project: None,
+                allow_null_clear: true,
+            },
         )
         .unwrap();
 

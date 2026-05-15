@@ -8,7 +8,7 @@ use cynic::QueryFragment;
 use serde::Serialize;
 
 // Re-export schema and scalar types so downstream crates can use them.
-pub use linear_schema::{schema, DateTime, TimelessDate};
+pub use linear_schema::{DateTime, TimelessDate, schema};
 
 /// User information for authentication
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, QueryFragment)]

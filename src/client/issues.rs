@@ -1,3 +1,4 @@
+use crate::client::LinearClient;
 use crate::client::queries::{
     BooleanComparatorInput, IDComparatorInput, IssueArchiveMutation, IssueArchiveMutationVariables,
     IssueCreateInput, IssueCreateMutation, IssueCreateMutationVariables, IssueDeleteMutation,
@@ -8,7 +9,6 @@ use crate::client::queries::{
     NullableIssueUpdateField, NullableProjectFilterInput, NullableUserFilterInput,
     StringComparatorInput,
 };
-use crate::client::LinearClient;
 use crate::error::CliError;
 use crate::issues::types::Issue;
 use cynic::{MutationBuilder, QueryBuilder};

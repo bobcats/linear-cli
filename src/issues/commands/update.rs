@@ -11,7 +11,7 @@ use crate::milestones::resolver::{
     MilestoneReferenceLookup, MilestoneReferenceResolver, ResolveMilestoneInput,
     ResolvedMilestonePatch,
 };
-use crate::output::{format_output, get_format_with_provider, OutputFormat};
+use crate::output::{OutputFormat, format_output, get_format_with_provider};
 use secrecy::ExposeSecret;
 
 #[allow(clippy::too_many_arguments)]

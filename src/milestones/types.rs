@@ -43,7 +43,10 @@ impl TableFormatter for Milestone {
     fn table_rows(&self) -> Vec<(Cow<'_, str>, Cow<'_, str>)> {
         let mut rows = vec![
             (Cow::Borrowed("Name"), Cow::Borrowed(self.name.as_str())),
-            (Cow::Borrowed("Project"), Cow::Borrowed(self.project.name.as_str())),
+            (
+                Cow::Borrowed("Project"),
+                Cow::Borrowed(self.project.name.as_str()),
+            ),
             (Cow::Borrowed("Status"), Cow::Borrowed(self.status.as_str())),
             (
                 Cow::Borrowed("Progress"),
@@ -52,20 +55,44 @@ impl TableFormatter for Milestone {
         ];
 
         if let Some(description) = &self.description {
-            rows.push((Cow::Borrowed("Description"), Cow::Borrowed(description.as_str())));
+            rows.push((
+                Cow::Borrowed("Description"),
+                Cow::Borrowed(description.as_str()),
+            ));
         }
         if let Some(target_date) = &self.target_date {
-            rows.push((Cow::Borrowed("Target Date"), Cow::Borrowed(target_date.as_str())));
+            rows.push((
+                Cow::Borrowed("Target Date"),
+                Cow::Borrowed(target_date.as_str()),
+            ));
         }
 
         rows.push((Cow::Borrowed("ID"), Cow::Borrowed(self.id.as_str())));
-        rows.push((Cow::Borrowed("Project ID"), Cow::Borrowed(self.project.id.as_str())));
-        rows.push((Cow::Borrowed("Project Slug"), Cow::Borrowed(self.project.slug_id.as_str())));
-        rows.push((Cow::Borrowed("Sort Order"), Cow::Owned(self.sort_order.to_string())));
-        rows.push((Cow::Borrowed("Created"), Cow::Borrowed(self.created_at.as_str())));
-        rows.push((Cow::Borrowed("Updated"), Cow::Borrowed(self.updated_at.as_str())));
+        rows.push((
+            Cow::Borrowed("Project ID"),
+            Cow::Borrowed(self.project.id.as_str()),
+        ));
+        rows.push((
+            Cow::Borrowed("Project Slug"),
+            Cow::Borrowed(self.project.slug_id.as_str()),
+        ));
+        rows.push((
+            Cow::Borrowed("Sort Order"),
+            Cow::Owned(self.sort_order.to_string()),
+        ));
+        rows.push((
+            Cow::Borrowed("Created"),
+            Cow::Borrowed(self.created_at.as_str()),
+        ));
+        rows.push((
+            Cow::Borrowed("Updated"),
+            Cow::Borrowed(self.updated_at.as_str()),
+        ));
         if let Some(archived_at) = &self.archived_at {
-            rows.push((Cow::Borrowed("Archived"), Cow::Borrowed(archived_at.as_str())));
+            rows.push((
+                Cow::Borrowed("Archived"),
+                Cow::Borrowed(archived_at.as_str()),
+            ));
         }
 
         rows
@@ -261,7 +288,10 @@ impl Formattable for MilestoneList {
                     milestone.project.name.clone(),
                     milestone.status.clone(),
                     format_progress_percent(milestone.progress),
-                    milestone.target_date.clone().unwrap_or_else(|| "—".to_string()),
+                    milestone
+                        .target_date
+                        .clone()
+                        .unwrap_or_else(|| "—".to_string()),
                 ]
             },
         )

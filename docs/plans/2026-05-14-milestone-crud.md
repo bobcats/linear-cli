@@ -1141,7 +1141,7 @@ git commit -m "docs: document milestone workflows"
 **Files:**
 - Potentially any file touched by formatting or final fixes.
 
-- [ ] **Step 1: Run formatter**
+- [x] **Step 1: Run formatter**
 
 Run:
 
@@ -1151,7 +1151,7 @@ cargo fmt --all
 
 Expected: command exits 0.
 
-- [ ] **Step 2: Run full workspace tests**
+- [x] **Step 2: Run full workspace tests**
 
 Run:
 
@@ -1161,7 +1161,7 @@ cargo test --workspace
 
 Expected: PASS.
 
-- [ ] **Step 3: Run check**
+- [x] **Step 3: Run check**
 
 Run:
 
@@ -1171,7 +1171,7 @@ cargo check
 
 Expected: PASS.
 
-- [ ] **Step 4: Run clippy with project gotcha command**
+- [x] **Step 4: Run clippy with project gotcha command**
 
 Run:
 
@@ -1181,7 +1181,7 @@ cargo clippy -p linear-cli --no-deps
 
 Expected: PASS. Do not run `cargo clippy --workspace`; repository guidance says it can hang on cynic proc macros.
 
-- [ ] **Step 5: Scan for accidental debug/slop markers**
+- [x] **Step 5: Scan for accidental debug/slop markers**
 
 Run:
 
@@ -1191,7 +1191,7 @@ rg -n "dbg!|println!|T[O]DO|F[I]XME|X[X]X|H[A]CK" src tests crates/linear-querie
 
 Expected: no accidental debug output or unresolved task markers introduced by this work.
 
-- [ ] **Step 6: Commit final formatting/fixes if needed**
+- [x] **Step 6: Commit final formatting/fixes if needed**
 
 If `cargo fmt` or cleanup changed files:
 

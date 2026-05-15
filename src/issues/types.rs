@@ -222,8 +222,16 @@ impl Formattable for IssueList {
                     .map(|u| u.name.as_str())
                     .unwrap_or(""),
                 &issue.creator.name,
-                issue.milestone.as_ref().map(|m| m.name.as_str()).unwrap_or(""),
-                issue.milestone.as_ref().map(|m| m.id.as_str()).unwrap_or(""),
+                issue
+                    .milestone
+                    .as_ref()
+                    .map(|m| m.name.as_str())
+                    .unwrap_or(""),
+                issue
+                    .milestone
+                    .as_ref()
+                    .map(|m| m.id.as_str())
+                    .unwrap_or(""),
                 &issue.created_at,
                 &issue.updated_at,
                 &issue.url,
@@ -632,7 +640,10 @@ impl Formattable for Issue {
             &self.created_at,
             &self.updated_at,
             &self.url,
-            self.milestone.as_ref().map(|m| m.name.as_str()).unwrap_or(""),
+            self.milestone
+                .as_ref()
+                .map(|m| m.name.as_str())
+                .unwrap_or(""),
             self.milestone.as_ref().map(|m| m.id.as_str()).unwrap_or(""),
             parent_str,
             children_str,

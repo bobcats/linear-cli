@@ -1,23 +1,23 @@
 use cynic::{MutationBuilder, QueryBuilder};
 use linear_cli::client::queries::{
-    TimelessDate,
     ProjectMilestoneCreateInput, ProjectMilestoneCreateMutation,
     ProjectMilestoneCreateMutationVariables, ProjectMilestoneDeleteMutation,
     ProjectMilestoneDeleteMutationVariables, ProjectMilestoneUpdateInput,
-    ProjectMilestoneUpdateMutation, ProjectMilestoneUpdateMutationVariables, ProjectMilestonesQuery,
-    ProjectMilestonesQueryVariables,
+    ProjectMilestoneUpdateMutation, ProjectMilestoneUpdateMutationVariables,
+    ProjectMilestonesQuery, ProjectMilestonesQueryVariables, TimelessDate,
 };
 
 #[test]
 fn project_milestone_create_serializes_required_fields() {
-    let operation = ProjectMilestoneCreateMutation::build(ProjectMilestoneCreateMutationVariables {
-        input: ProjectMilestoneCreateInput {
-            project_id: "project-1".to_string(),
-            name: "Beta".to_string(),
-            description: None,
-            target_date: Some(TimelessDate("2026-06-30".to_string())),
-        },
-    });
+    let operation =
+        ProjectMilestoneCreateMutation::build(ProjectMilestoneCreateMutationVariables {
+            input: ProjectMilestoneCreateInput {
+                project_id: "project-1".to_string(),
+                name: "Beta".to_string(),
+                description: None,
+                target_date: Some(TimelessDate("2026-06-30".to_string())),
+            },
+        });
     let json = serde_json::to_value(&operation).unwrap();
     let input = &json["variables"]["input"];
 
@@ -29,15 +29,16 @@ fn project_milestone_create_serializes_required_fields() {
 
 #[test]
 fn project_milestone_update_omits_unset_patch_fields() {
-    let operation = ProjectMilestoneUpdateMutation::build(ProjectMilestoneUpdateMutationVariables {
-        id: "milestone-1".to_string(),
-        input: ProjectMilestoneUpdateInput {
-            name: None,
-            description: Some("Updated".to_string()),
-            project_id: None,
-            target_date: None,
-        },
-    });
+    let operation =
+        ProjectMilestoneUpdateMutation::build(ProjectMilestoneUpdateMutationVariables {
+            id: "milestone-1".to_string(),
+            input: ProjectMilestoneUpdateInput {
+                name: None,
+                description: Some("Updated".to_string()),
+                project_id: None,
+                target_date: None,
+            },
+        });
     let json = serde_json::to_value(&operation).unwrap();
     let input = &json["variables"]["input"];
 
@@ -50,9 +51,10 @@ fn project_milestone_update_omits_unset_patch_fields() {
 
 #[test]
 fn project_milestone_delete_serializes_id() {
-    let operation = ProjectMilestoneDeleteMutation::build(ProjectMilestoneDeleteMutationVariables {
-        id: "milestone-1".to_string(),
-    });
+    let operation =
+        ProjectMilestoneDeleteMutation::build(ProjectMilestoneDeleteMutationVariables {
+            id: "milestone-1".to_string(),
+        });
     let json = serde_json::to_value(&operation).unwrap();
 
     assert_eq!(json["variables"]["id"], "milestone-1");

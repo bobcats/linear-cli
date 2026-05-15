@@ -56,7 +56,8 @@ impl<'a> MilestoneReferenceResolver<'a> {
                 return Ok(ResolvedMilestonePatch::Clear);
             }
             return Err(CliError::InvalidArgs(
-                "milestone reference 'null' is only valid when clearing issue milestone".to_string(),
+                "milestone reference 'null' is only valid when clearing issue milestone"
+                    .to_string(),
             ));
         }
 
@@ -95,9 +96,9 @@ impl<'a> MilestoneReferenceResolver<'a> {
             None => None,
         };
 
-        let matches = self
-            .lookup
-            .find_milestones_by_name(token, parsed_reference, project_id.as_deref())?;
+        let matches =
+            self.lookup
+                .find_milestones_by_name(token, parsed_reference, project_id.as_deref())?;
 
         match matches.len() {
             0 => Err(CliError::NotFound(format!(
@@ -119,7 +120,11 @@ impl<'a> MilestoneReferenceResolver<'a> {
 }
 
 fn parse_direct_reference(reference: &str) -> &str {
-    reference.trim_end_matches('/').rsplit('/').next().unwrap_or(reference)
+    reference
+        .trim_end_matches('/')
+        .rsplit('/')
+        .next()
+        .unwrap_or(reference)
 }
 
 fn is_uuid_like(value: &str) -> bool {
