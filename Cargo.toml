@@ -23,7 +23,7 @@ comfy-table = "7.1"
 
 [dev-dependencies]
 mockito = "1.7"
-serial_test = "3.2"
+serial_test = "3.5"
 tempfile = "3.23"
 assert_cmd = "2.2"
 predicates = "3.1"
